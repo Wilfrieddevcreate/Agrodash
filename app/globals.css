@@ -141,12 +141,17 @@
   body {
     height: 100%;
   }
+  html {
+    font-family: var(--font-sans-next), "Poppins", ui-sans-serif, system-ui,
+      -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
+    font-family: inherit;
+    font-weight: 400;
     font-optical-sizing: auto;
-    letter-spacing: -0.003em;
+    letter-spacing: -0.005em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -154,8 +159,19 @@
   h1,
   h2,
   h3,
-  h4 {
-    letter-spacing: -0.018em;
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  code,
+  kbd,
+  pre,
+  samp,
+  [class~="font-mono"] {
+    font-family: var(--font-mono-next), "Geist Mono", ui-monospace,
+      SFMono-Regular, "JetBrains Mono", monospace;
   }
   *::selection {
     background-color: color-mix(in oklab, var(--color-primary) 25%, transparent);

@@ -1,0 +1,84 @@
+name: CI · Deploy to Render
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: render-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ──────────────────────────────────────────────────────────
+  # 1. Validate: install, typecheck, build
+  # ──────────────────────────────────────────────────────────
+  validate:
+    name: Typecheck & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint .
+        continue-on-error: true
+
+      - name: Build
+        run: npm run build
+
+  # ──────────────────────────────────────────────────────────
+  # 2. Deploy: fire Render's deploy hook (main only)
+  # ──────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Render
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: production
+      url: ${{ vars.RENDER_SERVICE_URL }}
+    steps:
+      - name: Trigger Render deploy hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::error::RENDER_DEPLOY_HOOK_URL secret is not set."
+            exit 1
+          fi
+          echo "Triggering Render deploy..."
+          response=$(curl -s -w "\n%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
+          body=$(echo "$response" | head -n -1)
+          code=$(echo "$response" | tail -n 1)
+          echo "HTTP $code"
+          echo "$body"
+          if [ "$code" -ge 400 ]; then
+            echo "::error::Render deploy hook failed with status $code"
+            exit 1
+          fi
+
+      - name: Summary
+        run: |
+          echo "### 🚀 Deploy triggered" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Render is now building commit \`${{ github.sha }}\`." >> "$GITHUB_STEP_SUMMARY"
+          echo "Watch the logs in the [Render dashboard](https://dashboard.render.com)." >> "$GITHUB_STEP_SUMMARY"

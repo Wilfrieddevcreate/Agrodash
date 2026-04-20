@@ -148,8 +148,13 @@ Everything else (buttons, badges, charts, rings, gradients) picks it up automati
 
 ### Typography
 
-- **Sans**: [Inter](https://rsms.me/inter/) via `next/font`
-- **Mono**: [JetBrains Mono](https://www.jetbrains.com/lp/mono/) — used for metrics / KPIs
+- **Sans** — [Poppins](https://fonts.google.com/specimen/Poppins) (weights `300 · 400 · 500 · 600 · 700`) loaded via `next/font/google`. Applied on `<html>` so the font cascades to every child and Tailwind's `font-sans` utility resolves correctly.
+- **Mono** — [Geist Mono](https://vercel.com/font) for numeric / code contexts (`kbd`, `code`, `.font-mono`, tabular metrics).
+- **Display** — [Instrument Serif](https://fonts.google.com/specimen/Instrument+Serif) exposed as `--font-display-next` for optional serif accents.
+
+The font cascade is explicit in [`app/globals.css`](app/globals.css) so the chosen family renders even before `next/font` hashed-name resolution.
+
+**Swap the family:** edit [`app/layout.tsx`](app/layout.tsx) — replace `Poppins` with any Google/local font, update the `weight` array, done.
 
 ---
 
@@ -201,11 +206,33 @@ and include sensible `focus-visible` rings for accessibility.
 | Select         | `components/ui/select.tsx`       |
 | Tabs           | `components/ui/tabs.tsx`         |
 | Switch         | `components/ui/switch.tsx`       |
-| Tooltip        | `components/ui/tooltip.tsx`      |
+| Tooltip        | `components/ui/tooltip.tsx` — portaled, auto-flipping, theme-aware |
+| Pagination     | `components/ui/pagination.tsx` — elegant range + ellipsis paginator |
 | Progress       | `components/ui/progress.tsx`     |
 | Skeleton       | `components/ui/skeleton.tsx`     |
 | Avatar         | `components/ui/avatar.tsx`       |
 | Empty state    | `components/ui/empty-state.tsx`  |
+
+### Pagination
+
+Drop-in paginator used on Products, Orders, and Customers.
+
+```tsx
+import { Pagination } from "@/components/ui/pagination";
+
+<Pagination
+  page={page}
+  pageSize={10}
+  total={filtered.length}
+  onPageChange={setPage}
+  labels={t.common.pagination}          // localised
+/>
+```
+
+- Smart page range with ellipses (`1 … 4 5 6 … 12`)
+- Inverted solid pill for the current page
+- Responsive stack (summary over controls on mobile)
+- ARIA-correct (`nav[aria-label]`, `aria-current="page"`)
 
 ---
 
@@ -315,6 +342,33 @@ toast.success("Saved", { description: "Your changes are live." });
 | `npm run build` | Production build          |
 | `npm run start` | Serve the built app       |
 | `npm run lint`  | ESLint (flat config)      |
+
+---
+
+## 🚢 Deployment — Render + GitHub Actions
+
+A production-ready deploy pipeline is included.
+
+### One-click deploy (Render Blueprint)
+
+[`render.yaml`](render.yaml) defines the web service: Node 20.18 runtime, `npm ci && npm run build` build command, `npm start` start command, health check on `/`, auto-deploy from `main`.
+
+On Render → **New → Blueprint** → pick this repository. Render reads `render.yaml` and provisions the service. Configure any `DATABASE_URL` / `NEXT_PUBLIC_*` variables from the Render dashboard (keep them out of git).
+
+### CI/CD (GitHub Actions)
+
+[`.github/workflows/render-deploy.yml`](.github/workflows/render-deploy.yml) runs on every push + PR:
+
+1. **Validate** — `npm ci`, `tsc --noEmit`, `eslint`, `next build`
+2. **Deploy** — on `main`, posts to Render's deploy hook
+
+**Single secret to configure** in `Settings → Secrets and variables → Actions`:
+
+| Secret                    | Where to find                                           |
+|---------------------------|---------------------------------------------------------|
+| `RENDER_DEPLOY_HOOK_URL`  | Render dashboard → Service → Settings → **Deploy Hook** |
+
+Optionally add a `RENDER_SERVICE_URL` *variable* so the GitHub environment UI links to your live site.
 
 ---
 

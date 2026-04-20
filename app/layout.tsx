@@ -59,10 +59,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${sans.variable} ${mono.variable} ${display.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${sans.variable} ${mono.variable} ${display.variable}`}
+    >
+      <body className={`${sans.className} antialiased`}>
         <ThemeProvider>
           <LanguageProvider>
             <SidebarProvider>

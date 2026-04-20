@@ -1,0 +1,28 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploy this repo on Render with a single click (or via `render blueprint launch`).
+# Next.js 16 needs Node 20.9+; production uses the built output from `.next`.
+
+services:
+  - type: web
+    name: agrodash
+    runtime: node
+    region: frankfurt         # switch to oregon / singapore / ohio if closer to your users
+    plan: starter             # upgrade to standard / pro for more RAM + zero-downtime deploys
+    branch: main              # auto-deploys on pushes to this branch
+    rootDir: .
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true          # Render listens to GitHub pushes when connected
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      # Uncomment & set via the Render dashboard — never commit secrets.
+      # - key: DATABASE_URL
+      #   sync: false
+      # - key: NEXT_PUBLIC_API_URL
+      #   sync: false
