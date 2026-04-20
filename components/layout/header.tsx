@@ -22,7 +22,8 @@ import { useSidebar } from "@/components/providers/sidebar-provider";
 import { useLanguage, useT } from "@/components/providers/language-provider";
 import { useCommandPalette } from "@/components/command-palette/command-palette-provider";
 import { Avatar } from "@/components/ui/avatar";
-import { Dropdown, DropdownItem, DropdownLabel, DropdownSeparator } from "@/components/ui/dropdown";
+import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown";
+import type { Locale } from "@/lib/i18n";
 import { Tooltip } from "@/components/ui/tooltip";
 
 export function Header() {
@@ -90,6 +91,7 @@ export function Header() {
 
           {/* Language */}
           <Dropdown
+            contentClassName="min-w-[260px] p-0 overflow-hidden"
             trigger={
               <button
                 type="button"
@@ -101,22 +103,8 @@ export function Header() {
               </button>
             }
           >
-          <DropdownLabel>{t.nav.language}</DropdownLabel>
-          <DropdownItem onClick={() => setLocale("en")}>
-            <span className="flex-1">English</span>
-            {locale === "en" && <Check className="size-4 text-[color:var(--color-primary)]" />}
-          </DropdownItem>
-          <DropdownItem onClick={() => setLocale("fr")}>
-            <span className="flex-1">Français</span>
-            {locale === "fr" && <Check className="size-4 text-[color:var(--color-primary)]" />}
-          </DropdownItem>
-          {/*
-            Arabic (RTL) is wired in the provider + dictionary but kept out
-            of the user-facing switcher until its translation is complete.
-            To re-enable, uncomment this item and finish `buildArabic()` in
-            `lib/i18n.ts`.
-          */}
-        </Dropdown>
+            <LanguageMenu locale={locale} setLocale={setLocale} label={t.nav.language} />
+          </Dropdown>
 
         {/* Theme */}
         <Tooltip content={t.nav.toggleTheme} side="bottom">
@@ -295,5 +283,109 @@ function NotificationsMenu() {
         {t.nav.viewAll}
       </button>
     </Dropdown>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+ * Language menu — rich, flag-led picker
+ * ────────────────────────────────────────────────────────── */
+
+type LanguageOption = {
+  code: Locale;
+  /** Native name shown as the primary line */
+  native: string;
+  /** English name shown as a muted sub-label */
+  english: string;
+  /** Flag emoji — rendered inside a rounded badge */
+  flag: string;
+  /** ISO country/region shown in the trailing tag */
+  tag: string;
+};
+
+const LANGUAGES: LanguageOption[] = [
+  { code: "en", native: "English", english: "English", flag: "🇬🇧", tag: "EN" },
+  { code: "fr", native: "Français", english: "French", flag: "🇫🇷", tag: "FR" },
+  // Arabic remains wired in the provider but hidden until translation is complete.
+];
+
+function LanguageMenu({
+  locale,
+  setLocale,
+  label,
+}: {
+  locale: Locale;
+  setLocale: (l: Locale) => void;
+  label: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 border-b border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 px-3.5 py-2.5">
+        <Globe className="size-3.5 text-[color:var(--color-muted-foreground)]" />
+        <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
+          {label}
+        </span>
+      </div>
+      <div className="p-1.5">
+        {LANGUAGES.map((opt) => {
+          const active = locale === opt.code;
+          return (
+            <button
+              key={opt.code}
+              type="button"
+              onClick={() => setLocale(opt.code)}
+              aria-current={active ? "true" : undefined}
+              className={cn(
+                "group flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/40",
+                active
+                  ? "bg-[color:var(--color-primary)]/10"
+                  : "hover:bg-[color:var(--color-muted)]"
+              )}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "grid size-9 shrink-0 place-items-center rounded-full text-lg leading-none ring-1 ring-inset transition-colors",
+                  active
+                    ? "bg-[color:var(--color-primary)]/12 ring-[color:var(--color-primary)]/30"
+                    : "bg-[color:var(--color-muted)] ring-[color:var(--color-border)]"
+                )}
+              >
+                {opt.flag}
+              </span>
+              <span className="min-w-0 flex-1 leading-tight">
+                <span
+                  className={cn(
+                    "block truncate text-[13.5px] font-semibold",
+                    active
+                      ? "text-[color:var(--color-primary)]"
+                      : "text-[color:var(--color-foreground)]"
+                  )}
+                >
+                  {opt.native}
+                </span>
+                <span className="block truncate text-[11.5px] text-[color:var(--color-muted-foreground)]">
+                  {opt.english} · {opt.tag}
+                </span>
+              </span>
+              {active ? (
+                <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] shadow-elev-xs">
+                  <Check className="size-3" strokeWidth={3} />
+                </span>
+              ) : (
+                <span
+                  aria-hidden
+                  className="size-5 shrink-0 rounded-full border border-dashed border-[color:var(--color-border)] opacity-0 transition-opacity group-hover:opacity-100"
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <DropdownSeparator />
+      <div className="px-3.5 pb-2.5 pt-1 text-[11px] text-[color:var(--color-muted-foreground)]">
+        More locales coming soon.
+      </div>
+    </div>
   );
 }
