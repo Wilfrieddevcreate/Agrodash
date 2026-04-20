@@ -26,13 +26,17 @@ const display = Instrument_Serif({
   display: "swap",
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://agrodash.example.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AgroDash — Agribusiness Management Dashboard",
     template: "%s · AgroDash",
   },
   description:
-    "A premium, modern agribusiness management dashboard template for crops, inputs, orders and customers.",
+    "A premium, modern agribusiness management dashboard template for crops, inputs, orders, invoices, calendar, kanban and analytics.",
   keywords: [
     "agribusiness",
     "dashboard",
@@ -41,9 +45,47 @@ export const metadata: Metadata = {
     "fertilizer",
     "farmers",
     "agriculture",
+    "next.js",
+    "tailwind",
+    "admin template",
   ],
   applicationName: "AgroDash",
   authors: [{ name: "AgroDash Team" }],
+  creator: "AgroDash",
+  publisher: "AgroDash",
+  alternates: {
+    canonical: "/",
+    languages: {
+      en: "/",
+      fr: "/",
+    },
+  },
+  openGraph: {
+    type: "website",
+    siteName: "AgroDash",
+    title: "AgroDash — Premium Agribusiness Management Dashboard",
+    description:
+      "Manage crops, orders, invoices and logistics across every farm from one premium SaaS workspace.",
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AgroDash — Agribusiness Management Dashboard",
+    description:
+      "Premium SaaS dashboard template for agribusiness — Next.js 16, Tailwind 4, React 19.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "technology",
 };
 
 export const viewport: Viewport = {

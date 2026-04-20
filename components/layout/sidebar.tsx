@@ -6,10 +6,13 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BarChart3,
+  CalendarDays,
   ChevronsLeft,
+  KanbanSquare,
   LayoutDashboard,
   LogOut,
   Package,
+  Receipt,
   Settings,
   ShoppingCart,
   Sparkles,
@@ -27,6 +30,9 @@ type NavKey =
   | "products"
   | "orders"
   | "customers"
+  | "invoices"
+  | "calendar"
+  | "kanban"
   | "analytics"
   | "settings";
 
@@ -42,6 +48,9 @@ const mainNav: NavItem[] = [
   { href: "/products", key: "products", icon: Package },
   { href: "/orders", key: "orders", icon: ShoppingCart, badge: "12" },
   { href: "/customers", key: "customers", icon: Users },
+  { href: "/invoices", key: "invoices", icon: Receipt },
+  { href: "/calendar", key: "calendar", icon: CalendarDays },
+  { href: "/kanban", key: "kanban", icon: KanbanSquare },
   { href: "/analytics", key: "analytics", icon: BarChart3 },
 ];
 

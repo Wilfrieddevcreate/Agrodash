@@ -80,3 +80,33 @@ export interface Activity {
   timestamp: string;
   kind: "order" | "stock" | "customer" | "product" | "system";
 }
+
+// -------------------- INVOICES --------------------
+
+export type InvoiceStatus = "draft" | "sent" | "paid" | "overdue" | "void";
+
+export interface InvoiceLineItem {
+  productId: string;
+  name: string;
+  qty: number;
+  unitPrice: number;
+}
+
+export interface Invoice {
+  id: string;
+  number: string; // e.g., "INV-2026-0042"
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  customerAddress: string;
+  status: InvoiceStatus;
+  issueDate: string; // ISO
+  dueDate: string; // ISO
+  paidAt?: string;
+  items: InvoiceLineItem[];
+  subtotal: number;
+  tax: number; // computed
+  total: number;
+  notes?: string;
+  currency: string; // "USD"
+}
