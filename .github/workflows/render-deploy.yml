@@ -46,6 +46,8 @@ jobs:
 
   # ──────────────────────────────────────────────────────────
   # 2. Deploy: fire Render's deploy hook (main only)
+  #    Gracefully skips when RENDER_DEPLOY_HOOK_URL is not set,
+  #    so the workflow stays green until Render is wired up.
   # ──────────────────────────────────────────────────────────
   deploy:
     name: Deploy to Render
@@ -53,20 +55,26 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment:
-      name: production
-      url: ${{ vars.RENDER_SERVICE_URL }}
     steps:
-      - name: Trigger Render deploy hook
+      - name: Check for deploy hook
+        id: hook
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
-            echo "::error::RENDER_DEPLOY_HOOK_URL secret is not set."
-            exit 1
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::RENDER_DEPLOY_HOOK_URL secret is not set — skipping deploy. Add it at Settings → Secrets and variables → Actions."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Trigger Render deploy hook
+        if: steps.hook.outputs.configured == 'true'
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
           echo "Triggering Render deploy..."
-          response=$(curl -s -w "\n%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
+          response=$(curl -sS -w "\n%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
           body=$(echo "$response" | head -n -1)
           code=$(echo "$response" | tail -n 1)
           echo "HTTP $code"
@@ -76,9 +84,27 @@ jobs:
             exit 1
           fi
 
-      - name: Summary
+      - name: Summary — skipped
+        if: steps.hook.outputs.configured == 'false'
         run: |
-          echo "### 🚀 Deploy triggered" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Render is now building commit \`${{ github.sha }}\`." >> "$GITHUB_STEP_SUMMARY"
-          echo "Watch the logs in the [Render dashboard](https://dashboard.render.com)." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "### ⏭️ Deploy skipped"
+            echo ""
+            echo "No \`RENDER_DEPLOY_HOOK_URL\` secret is configured."
+            echo ""
+            echo "**To enable auto-deploy:**"
+            echo "1. Create the Render service (via \`render.yaml\` Blueprint)."
+            echo "2. In the service: **Settings → Deploy Hook → Copy URL**."
+            echo "3. In this repo: **Settings → Secrets and variables → Actions → New repository secret**."
+            echo "   Name: \`RENDER_DEPLOY_HOOK_URL\`. Paste the URL as the value."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summary — triggered
+        if: steps.hook.outputs.configured == 'true'
+        run: |
+          {
+            echo "### 🚀 Deploy triggered"
+            echo ""
+            echo "Render is now building commit \`${{ github.sha }}\`."
+            echo "Watch the logs in the [Render dashboard](https://dashboard.render.com)."
+          } >> "$GITHUB_STEP_SUMMARY"
