@@ -78,7 +78,7 @@ export function DialogContent({
       exit={{ opacity: 0, y: 8, scale: 0.98 }}
       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "relative z-10 flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl border border-[color:var(--color-border)] bg-[color:var(--color-card)] text-[color:var(--color-card-foreground)] shadow-xl sm:max-h-[min(calc(100vh-4rem),720px)] sm:rounded-xl",
+        "relative z-10 flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl border border-[color:var(--color-border)] bg-[color:var(--color-card)] text-[color:var(--color-card-foreground)] shadow-elev-xl sm:max-h-[min(calc(100vh-4rem),720px)] sm:rounded-2xl",
         widthClass,
         className
       )}

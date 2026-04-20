@@ -52,7 +52,7 @@ export function Sheet({
             transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
             style={{ maxWidth: "90vw" }}
             className={cn(
-              "absolute top-0 h-full bg-[color:var(--color-card)] shadow-xl",
+              "absolute top-0 h-full bg-[color:var(--color-card)] shadow-elev-xl",
               side === "left" ? "left-0 border-r" : "right-0 border-l",
               "border-[color:var(--color-border)]",
               widthClass,

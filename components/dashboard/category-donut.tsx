@@ -39,9 +39,11 @@ export function CategoryDonut() {
               contentStyle={{
                 background: "var(--color-popover)",
                 border: "1px solid var(--color-border)",
-                borderRadius: 10,
+                borderRadius: 12,
                 fontSize: 12,
-                padding: "6px 10px",
+                padding: "10px 14px",
+                boxShadow:
+                  "0 10px 32px -12px oklch(0.2 0.02 155 / 0.18), 0 4px 8px -4px oklch(0.2 0.02 155 / 0.08)",
               }}
               formatter={(value) => [`${Number(value)}%`, "Share"]}
             />

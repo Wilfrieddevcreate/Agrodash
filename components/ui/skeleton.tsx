@@ -7,9 +7,10 @@ export function Skeleton({
   return (
     <div
       className={cn(
-        "animate-shimmer rounded-md bg-[color:var(--color-muted)]",
+        "animate-shimmer rounded-lg bg-[color:var(--color-muted)]",
         className
       )}
+      aria-hidden
       {...props}
     />
   );

@@ -58,10 +58,14 @@ export function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         className={cn(
-          "inline-flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-[color:var(--color-input)] bg-[color:var(--color-card)] px-3 text-sm transition-colors",
-          "focus-visible:outline-none focus-visible:border-[color:var(--color-ring)] focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/40",
+          "inline-flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-[color:var(--color-input)] bg-[color:var(--color-card)] px-3 text-sm shadow-elev-xs",
+          "transition-[border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "hover:border-[color:var(--color-border)]",
+          "focus-visible:outline-none focus-visible:border-[color:var(--color-ring)] focus-visible:ring-[3px] focus-visible:ring-[color:var(--color-ring)]/20",
+          "data-[open=true]:border-[color:var(--color-ring)] data-[open=true]:ring-[3px] data-[open=true]:ring-[color:var(--color-ring)]/20",
           triggerClassName
         )}
+        data-open={open}
       >
         <span
           className={cn(
@@ -83,7 +87,7 @@ export function Select({
         <div
           role="listbox"
           className={cn(
-            "animate-fade-in-up absolute z-40 mt-1.5 min-w-full max-h-64 overflow-auto rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-popover)] p-1 shadow-lg",
+            "animate-fade-in-up absolute z-40 mt-1.5 min-w-full max-h-64 overflow-auto rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-popover)] p-1 shadow-elev-lg",
             align === "end" ? "right-0" : "left-0"
           )}
         >

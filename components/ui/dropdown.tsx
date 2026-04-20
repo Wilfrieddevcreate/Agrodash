@@ -49,7 +49,7 @@ export function Dropdown({
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.16 }}
             className={cn(
-              "absolute z-40 mt-1.5 min-w-[220px] rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-popover)] p-1 shadow-xl",
+              "absolute z-40 mt-1.5 min-w-[220px] rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-popover)] p-1 shadow-elev-xl",
               align === "end" ? "right-0" : "left-0",
               contentClassName
             )}
@@ -77,7 +77,8 @@ export function DropdownItem({
     <button
       type="button"
       className={cn(
-        "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors",
+        "flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-[13px] font-medium transition-colors",
+        "focus-visible:outline-none focus-visible:bg-[color:var(--color-muted)]",
         variant === "destructive"
           ? "text-[color:var(--color-destructive)] hover:bg-[color:var(--color-destructive)]/10"
           : "text-[color:var(--color-foreground)] hover:bg-[color:var(--color-muted)]",

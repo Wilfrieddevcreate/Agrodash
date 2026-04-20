@@ -29,7 +29,9 @@ export function Progress({
     >
       <div
         className={cn(
-          "h-full rounded-full bg-[color:var(--color-primary)] transition-[width] duration-500 ease-out",
+          "h-full rounded-full bg-[color:var(--color-primary)]",
+          "shadow-[inset_0_1px_0_0_oklch(1_0_0/0.25)]",
+          "transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
           indicatorClassName
         )}
         style={{ width: `${pct}%` }}

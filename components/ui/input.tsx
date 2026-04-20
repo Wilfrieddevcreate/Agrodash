@@ -1,6 +1,23 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Shared control geometry — used by Input, Textarea, Select trigger so the
+ * whole form language feels like one instrument.
+ */
+const fieldBase = [
+  "flex w-full rounded-lg border bg-[color:var(--color-card)] text-sm",
+  "border-[color:var(--color-input)]",
+  "text-[color:var(--color-foreground)]",
+  "placeholder:text-[color:var(--color-muted-foreground)]",
+  "shadow-elev-xs",
+  "transition-[border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+  "focus-visible:outline-none focus-visible:border-[color:var(--color-ring)]",
+  "focus-visible:ring-[3px] focus-visible:ring-[color:var(--color-ring)]/20",
+  "disabled:cursor-not-allowed disabled:opacity-50",
+  "hover:border-[color:var(--color-border)]",
+].join(" ");
+
 export const Input = React.forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>
@@ -9,11 +26,8 @@ export const Input = React.forwardRef<
     ref={ref}
     type={type}
     className={cn(
-      "flex h-10 w-full rounded-lg border border-[color:var(--color-input)] bg-[color:var(--color-card)] px-3 py-2 text-sm transition-colors",
-      "placeholder:text-[color:var(--color-muted-foreground)]",
-      "focus-visible:outline-none focus-visible:border-[color:var(--color-ring)] focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/40",
-      "disabled:cursor-not-allowed disabled:opacity-50",
-      "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+      fieldBase,
+      "h-10 px-3 py-2 file:border-0 file:bg-transparent file:text-sm file:font-medium",
       className
     )}
     {...props}
@@ -28,10 +42,8 @@ export const Textarea = React.forwardRef<
   <textarea
     ref={ref}
     className={cn(
-      "flex min-h-[90px] w-full rounded-lg border border-[color:var(--color-input)] bg-[color:var(--color-card)] px-3 py-2 text-sm transition-colors",
-      "placeholder:text-[color:var(--color-muted-foreground)]",
-      "focus-visible:outline-none focus-visible:border-[color:var(--color-ring)] focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/40",
-      "disabled:cursor-not-allowed disabled:opacity-50",
+      fieldBase,
+      "min-h-[96px] resize-y px-3 py-2.5 leading-relaxed",
       className
     )}
     {...props}
@@ -46,7 +58,7 @@ export function Label({
   return (
     <label
       className={cn(
-        "text-sm font-medium text-[color:var(--color-foreground)]",
+        "text-[13px] font-medium leading-none text-[color:var(--color-foreground)]",
         className
       )}
       {...props}
@@ -61,10 +73,12 @@ export function FieldHint({
   return (
     <p
       className={cn(
-        "text-xs text-[color:var(--color-muted-foreground)]",
+        "text-[11px] leading-relaxed text-[color:var(--color-muted-foreground)]",
         className
       )}
       {...props}
     />
   );
 }
+
+export { fieldBase };

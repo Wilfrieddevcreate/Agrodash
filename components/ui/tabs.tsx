@@ -81,10 +81,10 @@ export function TabsTrigger({
       aria-selected={active}
       onClick={() => ctx.setValue(value)}
       className={cn(
-        "inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]",
+        "inline-flex items-center justify-center rounded-md px-3 py-1.5 text-[13px] font-semibold transition-all duration-200",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/40",
         active
-          ? "bg-[color:var(--color-card)] text-[color:var(--color-foreground)] shadow-sm"
+          ? "bg-[color:var(--color-card)] text-[color:var(--color-foreground)] shadow-elev-xs"
           : "text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-foreground)]",
         className
       )}

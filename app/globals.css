@@ -220,6 +220,18 @@
   }
 }
 
+/* Respect users who prefer reduced motion — disable non-essential animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Premium shadow utilities (warm in light, black in dark) */
 @utility shadow-elev-xs { box-shadow: var(--shadow-xs); }
 @utility shadow-elev-sm { box-shadow: var(--shadow-sm); }
