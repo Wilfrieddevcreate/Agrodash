@@ -34,6 +34,30 @@ export function Header() {
   React.useEffect(() => setMounted(true), []);
 
   const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
+  const searchRef = React.useRef<HTMLInputElement>(null);
+  const mobileSearchRef = React.useRef<HTMLInputElement>(null);
+
+  // Ctrl/Cmd+K focuses the search input
+  React.useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        // On mobile, open the drawer and focus its input; on desktop focus the header search
+        if (window.matchMedia("(min-width: 768px)").matches) {
+          searchRef.current?.focus();
+          searchRef.current?.select();
+        } else {
+          setMobileSearchOpen(true);
+          // Let the drawer mount, then focus
+          requestAnimationFrame(() => {
+            mobileSearchRef.current?.focus();
+          });
+        }
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <header className="sticky top-0 z-30 border-b border-[color:var(--color-border)] bg-[color:var(--color-background)]/80 backdrop-blur-md">
@@ -52,12 +76,13 @@ export function Header() {
         <div className="relative ml-1 hidden min-w-0 flex-1 md:flex md:max-w-md">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
           <input
+            ref={searchRef}
             type="text"
             placeholder={t.nav.search}
             className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 pl-9 pr-14 text-sm transition-all placeholder:text-[color:var(--color-muted-foreground)] focus:bg-[color:var(--color-card)] focus-visible:border-[color:var(--color-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/30"
           />
           <kbd className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 select-none items-center gap-0.5 rounded border border-[color:var(--color-border)] bg-[color:var(--color-card)] px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--color-muted-foreground)] lg:inline-flex">
-            ⌘K
+            Ctrl K
           </kbd>
         </div>
 
@@ -183,6 +208,7 @@ export function Header() {
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
             <input
+              ref={mobileSearchRef}
               autoFocus
               type="text"
               placeholder={t.nav.search}

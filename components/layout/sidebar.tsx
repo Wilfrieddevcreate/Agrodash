@@ -63,13 +63,18 @@ export function Sidebar() {
   const pathname = usePathname();
   const t = useT();
 
-  // ⌘B / Ctrl+B toggles the desktop collapse state
+  // Ctrl/Cmd+B toggles desktop collapse (ignored while typing in inputs)
   React.useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
-        e.preventDefault();
-        setCollapsed(!collapsed);
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if (e.key.toLowerCase() !== "b") return;
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || target?.isContentEditable) {
+        return;
       }
+      e.preventDefault();
+      setCollapsed(!collapsed);
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -482,7 +487,7 @@ function CollapseToggle({
             <span>Collapse</span>
           </span>
           <kbd className="rounded border border-[color:var(--color-border)] bg-[color:var(--color-card)] px-1.5 py-0.5 font-mono text-[10px] text-[color:var(--color-muted-foreground)]">
-            ⌘B
+            Ctrl B
           </kbd>
         </>
       )}
