@@ -120,11 +120,12 @@ export function Sidebar() {
           collapsed ? "lg:w-[80px]" : "lg:w-[260px]",
           // Smooth transitions
           "transition-[width,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          // Mobile slide — hides off the inline-start edge in both directions
+          // Mobile slide — hides off the inline-start edge in both directions.
+          // Scope the off-screen transform to max-lg so the custom ltr:/rtl:
+          // variants don't override the desktop-visible state via cascade order.
           mobileOpen
             ? "translate-x-0"
-            : "ltr:-translate-x-full rtl:translate-x-full",
-          "lg:translate-x-0",
+            : "max-lg:ltr:-translate-x-full max-lg:rtl:translate-x-full",
           // Subtle shadow on mobile drawer
           "shadow-xl lg:shadow-none"
         )}
