@@ -22,7 +22,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import { orders } from "@/lib/mock-data";
 import type { OrderStatus } from "@/lib/types";
-import { cn, formatCurrency, formatDateTime } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
+import { useCurrency } from "@/components/providers/currency-provider";
 
 const timelineOrder: OrderStatus[] = [
   "pending",
@@ -44,6 +45,7 @@ const statusVariant: Record<
 
 export function OrderDetail({ id }: { id: string }) {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   const order = orders.find((o) => o.id === id);
   if (!order) notFound();
 
@@ -259,7 +261,7 @@ export function OrderDetail({ id }: { id: string }) {
                 <span>{order.deliveryAddress}</span>
               </div>
               <div className="text-[color:var(--color-muted-foreground)]">
-                {order.shippingMethod}
+                {t.orders.shippingMethods[order.shippingMethod]}
               </div>
             </CardContent>
           </Card>
@@ -276,7 +278,9 @@ export function OrderDetail({ id }: { id: string }) {
                 <span className="text-[color:var(--color-muted-foreground)]">
                   {t.orders.detail.paymentMethod}
                 </span>
-                <span className="font-medium">{order.paymentMethod}</span>
+                <span className="font-medium">
+                  {t.orders.paymentMethods[order.paymentMethod]}
+                </span>
               </div>
               <div className="mt-1.5 flex items-center justify-between">
                 <span className="text-[color:var(--color-muted-foreground)]">

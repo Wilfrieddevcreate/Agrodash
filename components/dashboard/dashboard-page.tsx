@@ -19,11 +19,13 @@ import { RevenueChart, StockLevelsChart } from "@/components/dashboard/revenue-c
 import { CategoryDonut } from "@/components/dashboard/category-donut";
 import { ActivityList } from "@/components/dashboard/activity-list";
 import { useT } from "@/components/providers/language-provider";
+import { useCurrency } from "@/components/providers/currency-provider";
 import { orders, products, stockLevels } from "@/lib/mock-data";
-import { formatCompact, formatCurrency, relativeTime } from "@/lib/utils";
+import { formatCompact, relativeTime } from "@/lib/utils";
 
 export function DashboardPage() {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
 
   const revenueSeries = React.useMemo(
     () => [18, 22, 28, 27, 34, 38, 36, 44, 48, 55, 62, 72].map((v) => ({ v })),
@@ -221,7 +223,7 @@ export function DashboardPage() {
                   {formatCurrency(o.total)}
                 </div>
                 <div className="text-[11px] text-[color:var(--color-muted-foreground)]">
-                  {o.paymentMethod}
+                  {t.orders.paymentMethods[o.paymentMethod]}
                 </div>
               </div>
               <div className="text-right sm:hidden">

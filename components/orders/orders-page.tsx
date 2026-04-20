@@ -23,7 +23,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import { orders } from "@/lib/mock-data";
 import type { OrderStatus } from "@/lib/types";
-import { formatCurrency, formatDate, initials } from "@/lib/utils";
+import { formatDate, initials } from "@/lib/utils";
+import { useCurrency } from "@/components/providers/currency-provider";
 
 const statusVariant: Record<
   OrderStatus,
@@ -40,6 +41,7 @@ const PAGE_SIZE = 10;
 
 export function OrdersPage() {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   const [search, setSearch] = React.useState("");
   const [status, setStatus] = React.useState<"all" | OrderStatus>("all");
   const [page, setPage] = React.useState(1);

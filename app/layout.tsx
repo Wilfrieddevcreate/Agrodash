@@ -3,6 +3,7 @@ import { Poppins, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LanguageProvider } from "@/components/providers/language-provider";
+import { CurrencyProvider } from "@/components/providers/currency-provider";
 import { SidebarProvider } from "@/components/providers/sidebar-provider";
 import "./globals.css";
 
@@ -110,19 +111,21 @@ export default function RootLayout({
       <body className={`${sans.className} antialiased`}>
         <ThemeProvider>
           <LanguageProvider>
-            <SidebarProvider>
-              {children}
-              <Toaster
-                position="bottom-right"
-                toastOptions={{
-                  classNames: {
-                    toast:
-                      "!bg-[color:var(--color-card)] !text-[color:var(--color-foreground)] !border-[color:var(--color-border)] !shadow-lg",
-                    description: "!text-[color:var(--color-muted-foreground)]",
-                  },
-                }}
-              />
-            </SidebarProvider>
+            <CurrencyProvider>
+              <SidebarProvider>
+                {children}
+                <Toaster
+                  position="bottom-right"
+                  toastOptions={{
+                    classNames: {
+                      toast:
+                        "!bg-[color:var(--color-card)] !text-[color:var(--color-foreground)] !border-[color:var(--color-border)] !shadow-lg",
+                      description: "!text-[color:var(--color-muted-foreground)]",
+                    },
+                  }}
+                />
+              </SidebarProvider>
+            </CurrencyProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

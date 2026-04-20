@@ -110,12 +110,12 @@ export function Header() {
             <span className="flex-1">Français</span>
             {locale === "fr" && <Check className="size-4 text-[color:var(--color-primary)]" />}
           </DropdownItem>
-          <DropdownItem onClick={() => setLocale("ar")}>
-            <span className="flex-1" lang="ar" dir="rtl">
-              العربية
-            </span>
-            {locale === "ar" && <Check className="size-4 text-[color:var(--color-primary)]" />}
-          </DropdownItem>
+          {/*
+            Arabic (RTL) is wired in the provider + dictionary but kept out
+            of the user-facing switcher until its translation is complete.
+            To re-enable, uncomment this item and finish `buildArabic()` in
+            `lib/i18n.ts`.
+          */}
         </Dropdown>
 
         {/* Theme */}

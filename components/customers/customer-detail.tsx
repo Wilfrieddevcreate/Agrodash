@@ -28,10 +28,12 @@ import {
 import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import { customers, orders } from "@/lib/mock-data";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
+import { useCurrency } from "@/components/providers/currency-provider";
 
 export function CustomerDetail({ id }: { id: string }) {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   const customer = customers.find((c) => c.id === id);
   if (!customer) notFound();
 

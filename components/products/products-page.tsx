@@ -34,7 +34,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import { products } from "@/lib/mock-data";
 import type { Product, ProductCategory, ProductStatus } from "@/lib/types";
-import { cn, formatCurrency, formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
+import { useCurrency } from "@/components/providers/currency-provider";
 import { ProductForm } from "@/components/products/product-form";
 
 const statusVariant: Record<
@@ -50,6 +51,7 @@ const PAGE_SIZE = 8;
 
 export function ProductsPage() {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   const [view, setView] = React.useState<"table" | "grid">("table");
   const [search, setSearch] = React.useState("");
   const [category, setCategory] = React.useState<"all" | ProductCategory>("all");

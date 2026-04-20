@@ -12,6 +12,7 @@ import {
 import { activities } from "@/lib/mock-data";
 import type { Activity } from "@/lib/types";
 import { relativeTime } from "@/lib/utils";
+import { useT } from "@/components/providers/language-provider";
 
 const kindMeta: Record<
   Activity["kind"],
@@ -25,6 +26,8 @@ const kindMeta: Record<
 };
 
 export function ActivityList() {
+  const t = useT();
+  const actionLabels = t.dashboard.activity.actions;
   return (
     <ul className="relative">
       <span
@@ -56,7 +59,7 @@ export function ActivityList() {
                 <span className="font-semibold">{a.actor}</span>
                 <span className="text-[color:var(--color-muted-foreground)]">
                   {" "}
-                  {a.action}{" "}
+                  {actionLabels[a.actionKey]}{" "}
                 </span>
                 <span className="font-medium">{a.target}</span>
               </p>

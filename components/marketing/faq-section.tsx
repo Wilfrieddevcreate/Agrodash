@@ -52,7 +52,7 @@ export function FaqSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-card)] shadow-elev-sm"
           >
-            {items.map((item, i) => (
+            {items.map((item) => (
               <details
                 key={item.q}
                 className="group border-b border-[color:var(--color-border)]/70 last:border-b-0 [&_summary::-webkit-details-marker]:hidden"

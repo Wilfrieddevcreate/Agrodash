@@ -16,11 +16,13 @@ import {
   YAxis,
 } from "recharts";
 import { salesSeries } from "@/lib/mock-data";
-import { formatCompact, formatCurrency } from "@/lib/utils";
+import { formatCompact } from "@/lib/utils";
 import { useT } from "@/components/providers/language-provider";
+import { useCurrency } from "@/components/providers/currency-provider";
 
 export function RevenueChart() {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   return (
     <ResponsiveContainer width="100%" height={300}>
       <ComposedChart

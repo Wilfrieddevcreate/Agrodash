@@ -23,7 +23,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import { customers } from "@/lib/mock-data";
 import type { CustomerTier } from "@/lib/types";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
+import { useCurrency } from "@/components/providers/currency-provider";
 
 const tierVariant: Record<
   CustomerTier,
@@ -39,6 +40,7 @@ const PAGE_SIZE = 8;
 
 export function CustomersPage() {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   const [search, setSearch] = React.useState("");
   const [tier, setTier] = React.useState<"all" | CustomerTier>("all");
   const [page, setPage] = React.useState(1);

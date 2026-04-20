@@ -119,8 +119,8 @@ export const orders: Order[] = Array.from({ length: 28 }).map((_, i) => {
     items,
     placedAt,
     deliveryAddress: `${customer.location}, ${customer.country}`,
-    paymentMethod: ["Mobile Money", "Bank Transfer", "Card", "Cash on Delivery"][Math.floor(rand() * 4)],
-    shippingMethod: ["Standard Truck", "Express Courier", "Regional Depot Pickup"][Math.floor(rand() * 3)],
+    paymentMethod: (["mobileMoney", "bankTransfer", "card", "cashOnDelivery"] as const)[Math.floor(rand() * 4)],
+    shippingMethod: (["standardTruck", "expressCourier", "depotPickup"] as const)[Math.floor(rand() * 3)],
     notes: rand() > 0.7 ? "Deliver before 10 AM. Call on arrival." : undefined,
   };
 });
@@ -128,13 +128,13 @@ export const orders: Order[] = Array.from({ length: 28 }).map((_, i) => {
 // -------------------- ACTIVITY --------------------
 
 export const activities: Activity[] = [
-  { id: "a1", actor: "Kwame Mensah", action: "placed an order for", target: "NPK 20-10-10 × 20 bags", timestamp: new Date(NOW - 2 * 60 * 1000).toISOString(), kind: "order" },
-  { id: "a2", actor: "System", action: "flagged low stock on", target: "Rice Paddy Seeds — Basmati 370", timestamp: new Date(NOW - 38 * 60 * 1000).toISOString(), kind: "stock" },
-  { id: "a3", actor: "Amara Diallo", action: "registered as new", target: "Cooperative customer", timestamp: new Date(NOW - 3 * 60 * 60 * 1000).toISOString(), kind: "customer" },
-  { id: "a4", actor: "Mmabatho Nkosi", action: "completed payment for", target: "Order ADX-2047", timestamp: new Date(NOW - 5 * 60 * 60 * 1000).toISOString(), kind: "order" },
-  { id: "a5", actor: "Warehouse", action: "restocked", target: "Hybrid Maize Seeds +600kg", timestamp: new Date(NOW - 9 * 60 * 60 * 1000).toISOString(), kind: "stock" },
-  { id: "a6", actor: "Chidi Okonkwo", action: "reviewed", target: "Cassava Stem Cuttings", timestamp: new Date(NOW - 22 * 60 * 60 * 1000).toISOString(), kind: "product" },
-  { id: "a7", actor: "System", action: "generated weekly", target: "sales report", timestamp: new Date(NOW - 26 * 60 * 60 * 1000).toISOString(), kind: "system" },
+  { id: "a1", actor: "Kwame Mensah", actionKey: "placedOrder", target: "NPK 20-10-10 × 20 bags", timestamp: new Date(NOW - 2 * 60 * 1000).toISOString(), kind: "order" },
+  { id: "a2", actor: "System", actionKey: "flaggedLowStock", target: "Rice Paddy Seeds — Basmati 370", timestamp: new Date(NOW - 38 * 60 * 1000).toISOString(), kind: "stock" },
+  { id: "a3", actor: "Amara Diallo", actionKey: "registeredCustomer", target: "Cooperative customer", timestamp: new Date(NOW - 3 * 60 * 60 * 1000).toISOString(), kind: "customer" },
+  { id: "a4", actor: "Mmabatho Nkosi", actionKey: "completedPayment", target: "Order ADX-2047", timestamp: new Date(NOW - 5 * 60 * 60 * 1000).toISOString(), kind: "order" },
+  { id: "a5", actor: "Warehouse", actionKey: "restocked", target: "Hybrid Maize Seeds +600kg", timestamp: new Date(NOW - 9 * 60 * 60 * 1000).toISOString(), kind: "stock" },
+  { id: "a6", actor: "Chidi Okonkwo", actionKey: "reviewed", target: "Cassava Stem Cuttings", timestamp: new Date(NOW - 22 * 60 * 60 * 1000).toISOString(), kind: "product" },
+  { id: "a7", actor: "System", actionKey: "generatedReport", target: "sales report", timestamp: new Date(NOW - 26 * 60 * 60 * 1000).toISOString(), kind: "system" },
 ];
 
 // -------------------- CHART DATA --------------------

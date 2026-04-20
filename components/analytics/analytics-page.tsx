@@ -28,7 +28,8 @@ import {
   salesSeries,
   weeklyOperations,
 } from "@/lib/mock-data";
-import { formatCompact, formatCurrency } from "@/lib/utils";
+import { formatCompact } from "@/lib/utils";
+import { useCurrency } from "@/components/providers/currency-provider";
 
 const palette = [
   "var(--color-chart-1)",
@@ -51,6 +52,7 @@ const tooltipStyle = {
 
 export function AnalyticsPage() {
   const t = useT();
+  const { format: formatCurrency } = useCurrency();
   const [range, setRange] = React.useState<DateRangeValue>({
     from: null,
     to: null,

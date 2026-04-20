@@ -1,6 +1,19 @@
 export type Locale = "en" | "fr" | "ar";
 
+/**
+ * Full list of supported locales (includes partially-translated ones).
+ * The user-facing language switcher uses `userFacingLocales` instead so
+ * we only expose locales that are production-ready.
+ */
 export const locales: Locale[] = ["en", "fr", "ar"];
+
+/**
+ * Locales exposed in the Settings + header language pickers.
+ * `ar` is disabled by default — its dictionary is a partial translation
+ * (~20% coverage via `buildArabic`). To re-enable, add "ar" here, finish
+ * the missing keys in `lib/i18n.ts`, and rebuild.
+ */
+export const userFacingLocales: Locale[] = ["en", "fr"];
 
 /** Locales whose UI should render right-to-left */
 export const rtlLocales: Locale[] = ["ar"];
@@ -101,6 +114,15 @@ const en = {
       activity: {
         title: "Recent Activity",
         subtitle: "Latest events from your operations",
+        actions: {
+          placedOrder: "placed an order for",
+          flaggedLowStock: "flagged low stock on",
+          registeredCustomer: "registered as new",
+          completedPayment: "completed payment for",
+          restocked: "restocked",
+          reviewed: "reviewed",
+          generatedReport: "generated weekly",
+        },
       },
     },
     products: {
@@ -195,6 +217,17 @@ const en = {
         shipped: "Shipped",
         delivered: "Delivered",
         cancelled: "Cancelled",
+      },
+      paymentMethods: {
+        mobileMoney: "Mobile Money",
+        bankTransfer: "Bank Transfer",
+        card: "Card",
+        cashOnDelivery: "Cash on Delivery",
+      },
+      shippingMethods: {
+        standardTruck: "Standard Truck",
+        expressCourier: "Express Courier",
+        depotPickup: "Regional Depot Pickup",
       },
       detail: {
         back: "Back to orders",
@@ -1582,6 +1615,15 @@ const fr = {
       activity: {
         title: "Activité récente",
         subtitle: "Derniers événements de vos opérations",
+        actions: {
+          placedOrder: "a passé une commande pour",
+          flaggedLowStock: "a signalé un stock faible sur",
+          registeredCustomer: "s'est inscrit comme nouveau",
+          completedPayment: "a payé",
+          restocked: "a réapprovisionné",
+          reviewed: "a évalué",
+          generatedReport: "a généré le",
+        },
       },
     },
     products: {
@@ -1676,6 +1718,17 @@ const fr = {
         shipped: "Expédiée",
         delivered: "Livrée",
         cancelled: "Annulée",
+      },
+      paymentMethods: {
+        mobileMoney: "Mobile Money",
+        bankTransfer: "Virement bancaire",
+        card: "Carte bancaire",
+        cashOnDelivery: "Paiement à la livraison",
+      },
+      shippingMethods: {
+        standardTruck: "Camion standard",
+        expressCourier: "Livraison express",
+        depotPickup: "Retrait au dépôt",
       },
       detail: {
         back: "Retour aux commandes",

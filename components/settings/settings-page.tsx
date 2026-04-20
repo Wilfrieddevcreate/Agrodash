@@ -19,31 +19,30 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/page-header";
 import { useLanguage, useT } from "@/components/providers/language-provider";
-import type { Locale } from "@/lib/i18n";
+import {
+  SUPPORTED_CURRENCIES,
+  useCurrency,
+  type Currency,
+} from "@/components/providers/currency-provider";
 import { cn } from "@/lib/utils";
 
-/**
- * Short inline hint shown under the language select when Arabic is active.
- * Hand-translated per UI locale because this string lives outside the main
- * dictionary (it's a meta-description of the selected language itself).
- */
-function rtlNoticeLabel(locale: Locale): string {
-  switch (locale) {
-    case "fr":
-      return "العربية s'affiche de droite à gauche.";
-    case "ar":
-      return "العربية تُعرض من اليمين إلى اليسار.";
-    default:
-      return "العربية uses a right-to-left layout.";
-  }
-}
+const CURRENCY_LABELS: Record<Currency, string> = {
+  USD: "US Dollar — USD",
+  EUR: "Euro — EUR",
+  GBP: "British Pound — GBP",
+  XOF: "CFA Franc (West) — XOF",
+  NGN: "Nigerian Naira — NGN",
+  ZAR: "South African Rand — ZAR",
+  KES: "Kenyan Shilling — KES",
+  GHS: "Ghanaian Cedi — GHS",
+};
 
 export function SettingsPage() {
   const t = useT();
   const { locale, setLocale } = useLanguage();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
-  const [currency, setCurrency] = React.useState("USD");
+  const { currency, setCurrency } = useCurrency();
 
   React.useEffect(() => setMounted(true), []);
 
@@ -182,20 +181,13 @@ export function SettingsPage() {
               <CardContent>
                 <div className="max-w-sm">
                   <Select
-                    value={locale}
-                    onValueChange={(v) => setLocale(v as "en" | "fr" | "ar")}
+                    value={locale === "ar" ? "en" : locale}
+                    onValueChange={(v) => setLocale(v as "en" | "fr")}
                     options={[
                       { label: "English (EN)", value: "en" },
                       { label: "Français (FR)", value: "fr" },
-                      { label: "العربية (AR)", value: "ar" },
                     ]}
                   />
-                  {locale === "ar" && (
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-[color:var(--color-primary)]/25 bg-[color:var(--color-primary)]/8 px-2.5 py-1.5 text-[11px] font-medium text-[color:var(--color-primary)]">
-                      <span className="size-1.5 rounded-full bg-[color:var(--color-primary)]" />
-                      <span>{rtlNoticeLabel(locale)}</span>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -211,14 +203,11 @@ export function SettingsPage() {
                 <div className="max-w-sm">
                   <Select
                     value={currency}
-                    onValueChange={setCurrency}
-                    options={[
-                      { label: "US Dollar — USD", value: "USD" },
-                      { label: "Euro — EUR", value: "EUR" },
-                      { label: "CFA Franc (West) — XOF", value: "XOF" },
-                      { label: "Nigerian Naira — NGN", value: "NGN" },
-                      { label: "South African Rand — ZAR", value: "ZAR" },
-                    ]}
+                    onValueChange={(v) => setCurrency(v as Currency)}
+                    options={SUPPORTED_CURRENCIES.map((c) => ({
+                      label: CURRENCY_LABELS[c],
+                      value: c,
+                    }))}
                   />
                 </div>
               </CardContent>

@@ -38,6 +38,17 @@ export interface OrderItem {
   price: number;
 }
 
+export type PaymentMethodKey =
+  | "mobileMoney"
+  | "bankTransfer"
+  | "card"
+  | "cashOnDelivery";
+
+export type ShippingMethodKey =
+  | "standardTruck"
+  | "expressCourier"
+  | "depotPickup";
+
 export interface Order {
   id: string;
   reference: string;
@@ -49,8 +60,8 @@ export interface Order {
   items: OrderItem[];
   placedAt: string;
   deliveryAddress: string;
-  paymentMethod: string;
-  shippingMethod: string;
+  paymentMethod: PaymentMethodKey;
+  shippingMethod: ShippingMethodKey;
   notes?: string;
 }
 
@@ -72,10 +83,20 @@ export interface Customer {
   avatarUrl?: string;
 }
 
+export type ActivityActionKey =
+  | "placedOrder"
+  | "flaggedLowStock"
+  | "registeredCustomer"
+  | "completedPayment"
+  | "restocked"
+  | "reviewed"
+  | "generatedReport";
+
 export interface Activity {
   id: string;
   actor: string;
-  action: string;
+  /** Translation key — looked up as `t.dashboard.activity.actions[actionKey]` */
+  actionKey: ActivityActionKey;
   target: string;
   timestamp: string;
   kind: "order" | "stock" | "customer" | "product" | "system";
