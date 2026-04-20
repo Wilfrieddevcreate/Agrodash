@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import type { CalendarEvent } from "@/lib/calendar-mock";
 import { eventKindColor } from "@/lib/calendar-mock";
+import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 import { formatTime } from "./date-utils";
 
@@ -21,6 +22,8 @@ export function EventPill({
   compact = true,
   className,
 }: EventPillProps) {
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
   const color = event.color ?? eventKindColor[event.kind];
   const start = new Date(event.start);
 
@@ -54,7 +57,7 @@ export function EventPill({
       />
       {!event.allDay && (
         <span className="shrink-0 font-mono tabular-nums text-[color:var(--color-muted-foreground)]">
-          {formatTime(start)}
+          {formatTime(start, localeTag)}
         </span>
       )}
       <span className="min-w-0 flex-1 truncate font-medium">{event.title}</span>

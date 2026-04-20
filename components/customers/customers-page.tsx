@@ -73,7 +73,7 @@ export function CustomersPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Network"
+        eyebrow={t.customers.eyebrow}
         title={t.customers.title}
         description={t.customers.subtitle}
         actions={

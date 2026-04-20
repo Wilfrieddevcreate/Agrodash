@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { useT } from "@/components/providers/language-provider";
 import type { CalendarEventKind } from "@/lib/calendar-mock";
-import { calendarKindOptions } from "@/lib/calendar-mock";
 import { toDateInputValue, toTimeInputValue } from "./date-utils";
 
 interface NewEventDialogProps {
@@ -23,11 +23,22 @@ interface NewEventDialogProps {
   initialDate?: Date;
 }
 
+const KIND_VALUES: CalendarEventKind[] = [
+  "harvest",
+  "planting",
+  "delivery",
+  "meeting",
+  "inspection",
+  "payment",
+  "training",
+];
+
 export function NewEventDialog({
   open,
   onOpenChange,
   initialDate,
 }: NewEventDialogProps) {
+  const t = useT();
   const [title, setTitle] = React.useState("");
   const [kind, setKind] = React.useState<CalendarEventKind>("meeting");
   const [date, setDate] = React.useState<string>(
@@ -38,6 +49,15 @@ export function NewEventDialog({
   const [allDay, setAllDay] = React.useState(false);
   const [location, setLocation] = React.useState("");
   const [description, setDescription] = React.useState("");
+
+  const kindOptions = React.useMemo(
+    () =>
+      KIND_VALUES.map((k) => ({
+        label: t.calendar.kinds[k],
+        value: k,
+      })),
+    [t.calendar.kinds]
+  );
 
   // Re-sync fields when dialog opens with a different day
   React.useEffect(() => {
@@ -62,11 +82,11 @@ export function NewEventDialog({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) {
-      toast.error("Title is required");
+      toast.error(t.calendar.toasts.titleRequired);
       return;
     }
-    toast.success("Event created", {
-      description: `“${title}” has been added to your calendar.`,
+    toast.success(t.calendar.toasts.created, {
+      description: `${t.calendar.toasts.createdDescPrefix}${title}${t.calendar.toasts.createdDescSuffix}`,
     });
     onOpenChange(false);
   }
@@ -74,17 +94,17 @@ export function NewEventDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        title="New event"
-        description="Add a harvest, delivery, meeting, inspection or payment to your calendar."
+        title={t.calendar.form.addTitle}
+        description={t.calendar.form.addDescription}
         widthClass="max-w-xl"
       >
         <form onSubmit={handleSubmit} className="contents">
           <DialogBody className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ne-title">Title</Label>
+              <Label htmlFor="ne-title">{t.calendar.form.eventTitle}</Label>
               <Input
                 id="ne-title"
-                placeholder="e.g. Harvest rice field B"
+                placeholder={t.calendar.form.eventTitlePlaceholder}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 autoFocus
@@ -93,15 +113,15 @@ export function NewEventDialog({
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label>Kind</Label>
+                <Label>{t.calendar.form.kind}</Label>
                 <Select
                   value={kind}
                   onValueChange={(v) => setKind(v as CalendarEventKind)}
-                  options={calendarKindOptions}
+                  options={kindOptions}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="ne-date">Date</Label>
+                <Label htmlFor="ne-date">{t.calendar.form.date}</Label>
                 <Input
                   id="ne-date"
                   type="date"
@@ -113,7 +133,7 @@ export function NewEventDialog({
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
               <div className="space-y-1.5">
-                <Label htmlFor="ne-start">Start time</Label>
+                <Label htmlFor="ne-start">{t.calendar.form.startTime}</Label>
                 <Input
                   id="ne-start"
                   type="time"
@@ -123,7 +143,7 @@ export function NewEventDialog({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="ne-end">End time</Label>
+                <Label htmlFor="ne-end">{t.calendar.form.endTime}</Label>
                 <Input
                   id="ne-end"
                   type="time"
@@ -139,26 +159,26 @@ export function NewEventDialog({
                   onCheckedChange={setAllDay}
                 />
                 <Label htmlFor="ne-allday" className="cursor-pointer select-none">
-                  All day
+                  {t.calendar.form.allDay}
                 </Label>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="ne-location">Location</Label>
+              <Label htmlFor="ne-location">{t.calendar.form.location}</Label>
               <Input
                 id="ne-location"
-                placeholder="e.g. Nairobi Depot"
+                placeholder={t.calendar.form.locationPlaceholder}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="ne-desc">Description</Label>
+              <Label htmlFor="ne-desc">{t.calendar.form.description}</Label>
               <Textarea
                 id="ne-desc"
-                placeholder="Notes, agenda, links…"
+                placeholder={t.calendar.form.descriptionPlaceholder}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
@@ -173,10 +193,10 @@ export function NewEventDialog({
               size="sm"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {t.calendar.form.cancel}
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              Create event
+              {t.calendar.form.save}
             </Button>
           </DialogFooter>
         </form>

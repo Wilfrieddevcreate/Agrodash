@@ -1,12 +1,16 @@
+"use client";
+
 import * as React from "react";
 import { LogoMark } from "@/components/layout/logo";
 import { Avatar } from "@/components/ui/avatar";
+import { useT } from "@/components/providers/language-provider";
 
 /**
  * Right-side marketing panel shown on the auth layout at lg+ screens.
- * Server component — pure composition with brand tokens and static copy.
+ * Pure composition with brand tokens and localized copy.
  */
 export function MarketingPanel() {
+  const t = useT();
   return (
     <aside
       aria-hidden="true"
@@ -61,20 +65,32 @@ export function MarketingPanel() {
         {/* Top: brand eyebrow */}
         <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70">
           <span className="size-1.5 rounded-full bg-white/70" />
-          AgroDash Platform
+          {t.auth.marketing.eyebrow}
         </div>
 
         {/* Center: stat card */}
         <div className="flex flex-col gap-6">
           <h2 className="max-w-sm text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-white xl:text-[32px]">
-            The operating system for modern agribusiness.
+            {t.auth.marketing.heading}
           </h2>
 
           <div className="grid max-w-md grid-cols-2 gap-3">
-            <StatCard label="Hectares tracked" value="12,400+" />
-            <StatCard label="Farms managed" value="2,400+" />
-            <StatCard label="Harvest tracked" value="$18M" />
-            <StatCard label="On-time deliveries" value="98%" />
+            <StatCard
+              label={t.auth.marketing.stats.hectares}
+              value="12,400+"
+            />
+            <StatCard
+              label={t.auth.marketing.stats.farms}
+              value="2,400+"
+            />
+            <StatCard
+              label={t.auth.marketing.stats.harvest}
+              value="$18M"
+            />
+            <StatCard
+              label={t.auth.marketing.stats.deliveries}
+              value="98%"
+            />
           </div>
         </div>
 
@@ -89,8 +105,7 @@ export function MarketingPanel() {
             <path d="M7.2 5.4c-2.5 1.5-4 4-4 7.2v6h6v-6H6.6c.3-1.7 1.3-3 3-3.8l-2.4-3.4Zm9.6 0c-2.5 1.5-4 4-4 7.2v6h6v-6h-2.6c.3-1.7 1.3-3 3-3.8l-2.4-3.4Z" />
           </svg>
           <blockquote className="text-[13.5px] leading-relaxed text-white/90">
-            AgroDash replaced four spreadsheets and a whiteboard. We plan the
-            entire harvest season in one afternoon now.
+            {t.auth.marketing.testimonialQuote}
           </blockquote>
           <figcaption className="mt-4 flex items-center gap-3">
             <Avatar
@@ -103,7 +118,7 @@ export function MarketingPanel() {
                 Mara Okafor
               </div>
               <div className="text-[11.5px] text-white/70">
-                Operations Lead, Greenfield Co-op
+                {t.auth.marketing.testimonialRole}
               </div>
             </div>
           </figcaption>

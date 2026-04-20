@@ -79,21 +79,21 @@ export function isToday(d: Date, reference: Date = new Date()): boolean {
 }
 
 /** "April 2026" style */
-export function formatMonthYear(d: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatMonthYear(d: Date, locale: string = "en-US"): string {
+  return new Intl.DateTimeFormat(locale, {
     month: "long",
     year: "numeric",
   }).format(d);
 }
 
 /** "Apr" (3 letter short month) */
-export function formatMonthShort(d: Date): string {
-  return new Intl.DateTimeFormat("en-US", { month: "short" }).format(d);
+export function formatMonthShort(d: Date, locale: string = "en-US"): string {
+  return new Intl.DateTimeFormat(locale, { month: "short" }).format(d);
 }
 
 /** "Mon, Apr 20" */
-export function formatDayLong(d: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatDayLong(d: Date, locale: string = "en-US"): string {
+  return new Intl.DateTimeFormat(locale, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -101,24 +101,29 @@ export function formatDayLong(d: Date): string {
 }
 
 /** "09:30" 24h */
-export function formatTime(d: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatTime(d: Date, locale: string = "en-US"): string {
+  return new Intl.DateTimeFormat(locale, {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   }).format(d);
 }
 
-/** "09:30 – 11:00" or "All day" or "09:30 – 11:00 · Apr 21" if multi-day */
+/**
+ * "09:30 – 11:00" or "All day" or "09:30 – 11:00 · Apr 21" if multi-day.
+ * Pass the translated all-day label so output stays localized.
+ */
 export function formatEventTimeRange(
   start: Date,
   end: Date,
-  allDay?: boolean
+  allDay?: boolean,
+  options?: { locale?: string; allDayLabel?: string }
 ): string {
-  if (allDay) return "All day";
+  const locale = options?.locale ?? "en-US";
+  if (allDay) return options?.allDayLabel ?? "All day";
   const sameDay = isSameDay(start, end);
-  if (sameDay) return `${formatTime(start)} – ${formatTime(end)}`;
-  return `${formatTime(start)} – ${formatTime(end)} · ${formatDayLong(end)}`;
+  if (sameDay) return `${formatTime(start, locale)} – ${formatTime(end, locale)}`;
+  return `${formatTime(start, locale)} – ${formatTime(end, locale)} · ${formatDayLong(end, locale)}`;
 }
 
 /** "YYYY-MM-DD" for <input type="date"> values — local time. */

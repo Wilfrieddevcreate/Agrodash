@@ -59,17 +59,17 @@ export function DashboardPage() {
         title={t.dashboard.title}
         subtitle={t.dashboard.subtitle}
         highlightValue={formatCurrency(932840)}
-        highlightLabel="This month"
+        highlightLabel={t.dashboard.thisMonth}
         primaryCta={{
           label: t.dashboard.newOrder,
           onClick: () =>
-            toast.success("New order drawer", {
-              description: "This would open the order wizard.",
+            toast.success(t.dashboard.toast.newOrderDrawer, {
+              description: t.dashboard.toast.newOrderDrawerDesc,
             }),
         }}
         secondaryCta={{
           label: t.dashboard.export,
-          onClick: () => toast.success("Export started"),
+          onClick: () => toast.success(t.dashboard.toast.exportStarted),
         }}
         className="mb-6"
       />
@@ -80,7 +80,7 @@ export function DashboardPage() {
           label={t.dashboard.kpi.revenue}
           value={formatCurrency(932840)}
           delta={12.8}
-          helper="vs last month"
+          helper={t.dashboard.vsLastMonth}
           icon={<DollarSign />}
           series={revenueSeries}
           accentVar="--color-chart-1"
@@ -90,7 +90,7 @@ export function DashboardPage() {
           label={t.dashboard.kpi.orders}
           value={formatCompact(6842)}
           delta={8.4}
-          helper="vs last month"
+          helper={t.dashboard.vsLastMonth}
           icon={<ShoppingBag />}
           series={orderSeries}
           accentVar="--color-chart-2"
@@ -100,7 +100,7 @@ export function DashboardPage() {
           label={t.dashboard.kpi.customers}
           value={formatCompact(1284)}
           delta={5.2}
-          helper="active this month"
+          helper={t.dashboard.activeThisMonth}
           icon={<Users />}
           series={customerSeries}
           accentVar="--color-chart-3"
@@ -110,7 +110,7 @@ export function DashboardPage() {
           label={t.dashboard.kpi.products}
           value={formatCompact(products.length * 142)}
           delta={-2.1}
-          helper="inventory units"
+          helper={t.dashboard.inventoryUnits}
           icon={<Package />}
           series={productSeries}
           accentVar="--color-chart-4"
@@ -178,13 +178,13 @@ export function DashboardPage() {
       <Card className="mt-5">
         <CardHeader className="flex flex-row items-center justify-between gap-3">
           <div className="min-w-0">
-            <CardTitle>Recent orders</CardTitle>
+            <CardTitle>{t.dashboard.recentOrdersTitle}</CardTitle>
             <CardDescription className="hidden sm:block">
-              Most recent orders across all regions
+              {t.dashboard.recentOrdersSubtitle}
             </CardDescription>
           </div>
           <Button variant="ghost" size="sm" className="shrink-0">
-            <span className="hidden sm:inline">View all</span>
+            <span className="hidden sm:inline">{t.nav.viewAll}</span>
             <ArrowUpRight />
           </Button>
         </CardHeader>
@@ -208,7 +208,11 @@ export function DashboardPage() {
                   suppressHydrationWarning
                   className="truncate text-xs text-[color:var(--color-muted-foreground)]"
                 >
-                  {o.items.length} item{o.items.length > 1 ? "s" : ""} ·{" "}
+                  {o.items.length}{" "}
+                  {o.items.length > 1
+                    ? t.dashboard.itemsPlural
+                    : t.dashboard.itemsSingular}
+                  {" · "}
                   {relativeTime(o.placedAt)}
                 </div>
               </div>

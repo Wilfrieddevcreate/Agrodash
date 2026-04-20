@@ -8,8 +8,10 @@ import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { AuthCard } from "@/components/auth/auth-card";
+import { useT } from "@/components/providers/language-provider";
 
 export function ForgotPasswordForm() {
+  const t = useT();
   const [email, setEmail] = React.useState("");
   const [submitted, setSubmitted] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
@@ -21,8 +23,8 @@ export function ForgotPasswordForm() {
     window.setTimeout(() => {
       setSubmitting(false);
       setSubmitted(true);
-      toast.success("Reset link sent", {
-        description: `Check ${email} for instructions.`,
+      toast.success(t.auth.forgot.toastSuccess, {
+        description: `${t.auth.forgot.toastSuccessDescPrefix} ${email} ${t.auth.forgot.toastSuccessDescSuffix}`,
       });
     }, 500);
   }
@@ -39,16 +41,16 @@ export function ForgotPasswordForm() {
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
             <AuthCard
-              title="Reset your password"
-              description="We'll email you a secure reset link"
+              title={t.auth.forgot.title}
+              description={t.auth.forgot.subtitle}
               footer={
                 <>
-                  Remembered it?{" "}
+                  {t.auth.forgot.remembered}{" "}
                   <Link
                     href="/login"
                     className="font-semibold text-[color:var(--color-foreground)] underline-offset-4 hover:underline"
                   >
-                    Back to sign in
+                    {t.auth.forgot.backToSignIn}
                   </Link>
                 </>
               }
@@ -59,13 +61,13 @@ export function ForgotPasswordForm() {
                 noValidate
               >
                 <div className="space-y-1.5">
-                  <Label htmlFor="email">Work email</Label>
+                  <Label htmlFor="email">{t.auth.forgot.email}</Label>
                   <Input
                     id="email"
                     type="email"
                     autoComplete="email"
                     required
-                    placeholder="you@company.com"
+                    placeholder={t.auth.forgot.emailPlaceholder}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -78,7 +80,9 @@ export function ForgotPasswordForm() {
                   className="w-full"
                   disabled={submitting}
                 >
-                  {submitting ? "Sending..." : "Send reset link"}
+                  {submitting
+                    ? t.auth.forgot.submitting
+                    : t.auth.forgot.submit}
                   <ArrowRight className="size-4" />
                 </Button>
               </form>
@@ -111,14 +115,14 @@ export function ForgotPasswordForm() {
 
             <div className="space-y-1.5">
               <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-[color:var(--color-foreground)]">
-                Check your inbox
+                {t.auth.forgot.success.title}
               </h1>
               <p className="text-sm leading-relaxed text-[color:var(--color-muted-foreground)]">
-                We sent instructions to{" "}
+                {t.auth.forgot.success.descriptionPrefix}{" "}
                 <span className="font-medium text-[color:var(--color-foreground)]">
                   {email}
                 </span>
-                . The link will expire in 30 minutes.
+                {t.auth.forgot.success.descriptionSuffix}
               </p>
             </div>
 
@@ -132,7 +136,7 @@ export function ForgotPasswordForm() {
                 })}
               >
                 <ArrowLeft className="size-4" />
-                Back to sign in
+                {t.auth.forgot.success.back}
               </Link>
               <button
                 type="button"
@@ -141,7 +145,7 @@ export function ForgotPasswordForm() {
                 }}
                 className="text-[12.5px] font-medium text-[color:var(--color-muted-foreground)] underline-offset-4 transition-colors hover:text-[color:var(--color-foreground)] hover:underline"
               >
-                Didn&apos;t get it? Try a different email
+                {t.auth.forgot.success.tryAgain}
               </button>
             </div>
           </motion.div>

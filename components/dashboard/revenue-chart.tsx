@@ -17,8 +17,10 @@ import {
 } from "recharts";
 import { salesSeries } from "@/lib/mock-data";
 import { formatCompact, formatCurrency } from "@/lib/utils";
+import { useT } from "@/components/providers/language-provider";
 
 export function RevenueChart() {
+  const t = useT();
   return (
     <ResponsiveContainer width="100%" height={300}>
       <ComposedChart
@@ -75,8 +77,8 @@ export function RevenueChart() {
           formatter={(value, name) => {
             const n = Number(value);
             return name === "revenue"
-              ? [formatCurrency(n), "Revenue"]
-              : [n.toLocaleString(), "Orders"];
+              ? [formatCurrency(n), t.dashboard.charts.revenueSeries]
+              : [n.toLocaleString(), t.dashboard.charts.ordersSeries];
           }}
         />
         <Legend
@@ -94,7 +96,7 @@ export function RevenueChart() {
           stroke="var(--color-chart-1)"
           fill="url(#revenue-grad)"
           strokeWidth={2.5}
-          name="Revenue"
+          name={t.dashboard.charts.revenueSeries}
         />
         <Line
           yAxisId="right"
@@ -104,7 +106,7 @@ export function RevenueChart() {
           strokeWidth={2}
           dot={false}
           activeDot={{ r: 4 }}
-          name="Orders"
+          name={t.dashboard.charts.ordersSeries}
         />
       </ComposedChart>
     </ResponsiveContainer>
@@ -116,6 +118,7 @@ export function StockLevelsChart({
 }: {
   data: Array<{ name: string; current: number; target: number }>;
 }) {
+  const t = useT();
   return (
     <ResponsiveContainer width="100%" height={260}>
       <BarChart
@@ -162,13 +165,13 @@ export function StockLevelsChart({
           dataKey="target"
           fill="var(--color-muted)"
           radius={[0, 6, 6, 0]}
-          name="Target"
+          name={t.dashboard.charts.targetSeries}
         />
         <Bar
           dataKey="current"
           fill="var(--color-chart-1)"
           radius={[0, 6, 6, 0]}
-          name="Current"
+          name={t.dashboard.charts.currentSeries}
         />
       </BarChart>
     </ResponsiveContainer>

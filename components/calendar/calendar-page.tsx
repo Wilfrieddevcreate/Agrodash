@@ -14,6 +14,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/layout/page-header";
+import { useLanguage, useT } from "@/components/providers/language-provider";
 import { calendarEvents, type CalendarEvent } from "@/lib/calendar-mock";
 import { MonthGrid } from "./month-grid";
 import { UpcomingList } from "./upcoming-list";
@@ -25,6 +26,10 @@ import { cn } from "@/lib/utils";
 type ViewKey = "month" | "week" | "day";
 
 export function CalendarPage() {
+  const t = useT();
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
+
   // Anchor the initial month on the seeded "today" (April 2026) so the grid
   // renders the same on server and client — `today` below is client-only.
   const [cursor, setCursor] = React.useState<Date>(
@@ -69,14 +74,14 @@ export function CalendarPage() {
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
     >
       <PageHeader
-        eyebrow="Planning"
-        title="Calendar"
-        description="Track harvests, deliveries, inspections and payments across your operation."
+        eyebrow={t.calendar.eyebrow}
+        title={t.calendar.title}
+        description={t.calendar.subtitle}
         actions={
           <>
             <Button variant="outline" size="sm">
               <Filter />
-              Filters
+              {t.calendar.filters}
             </Button>
             <Button
               size="sm"
@@ -87,7 +92,7 @@ export function CalendarPage() {
               }}
             >
               <Plus />
-              New event
+              {t.calendar.new}
             </Button>
           </>
         }
@@ -101,7 +106,7 @@ export function CalendarPage() {
               <Button
                 variant="ghost"
                 size="iconSm"
-                aria-label="Previous month"
+                aria-label={t.calendar.prevMonth}
                 onClick={() => setCursor(addMonths(cursor, -1))}
               >
                 <ChevronLeft />
@@ -112,26 +117,26 @@ export function CalendarPage() {
                 onClick={goToToday}
                 className="px-3"
               >
-                Today
+                {t.calendar.today}
               </Button>
               <Button
                 variant="ghost"
                 size="iconSm"
-                aria-label="Next month"
+                aria-label={t.calendar.nextMonth}
                 onClick={() => setCursor(addMonths(cursor, 1))}
               >
                 <ChevronRight />
               </Button>
             </div>
             <h2 className="text-base font-semibold sm:text-lg">
-              {formatMonthYear(cursor)}
+              {formatMonthYear(cursor, localeTag)}
             </h2>
           </div>
 
           <TabsList>
-            <TabsTrigger value="month">Month</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="day">Day</TabsTrigger>
+            <TabsTrigger value="month">{t.calendar.tabs.month}</TabsTrigger>
+            <TabsTrigger value="week">{t.calendar.tabs.week}</TabsTrigger>
+            <TabsTrigger value="day">{t.calendar.tabs.day}</TabsTrigger>
           </TabsList>
         </div>
 
@@ -168,15 +173,15 @@ export function CalendarPage() {
 
         <TabsContent value="week">
           <ViewPlaceholder
-            label="Week"
-            description="A week-long timeline view is on the way. For now, use the month grid or the agenda list."
+            label={t.calendar.tabs.week}
+            description={t.calendar.weekComingSoon}
           />
         </TabsContent>
 
         <TabsContent value="day">
           <ViewPlaceholder
-            label="Day"
-            description="A detailed day view is on the way. For now, tap any day in the month grid to add or inspect events."
+            label={t.calendar.tabs.day}
+            description={t.calendar.dayComingSoon}
           />
         </TabsContent>
       </Tabs>
@@ -235,13 +240,12 @@ function UpcomingCard({
   today?: Date;
   className?: string;
 }) {
+  const t = useT();
   return (
     <Card className={cn("sticky top-4", className)}>
       <CardHeader className="pb-3">
-        <CardTitle>Upcoming this week</CardTitle>
-        <CardDescription>
-          The next events on your calendar.
-        </CardDescription>
+        <CardTitle>{t.calendar.upcoming.title}</CardTitle>
+        <CardDescription>{t.calendar.upcoming.description}</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
         <UpcomingList
@@ -264,13 +268,12 @@ function MobileAgenda({
   onEventClick: (e: CalendarEvent) => void;
   today?: Date;
 }) {
+  const t = useT();
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle>Agenda</CardTitle>
-        <CardDescription>
-          Your upcoming events, grouped by day.
-        </CardDescription>
+        <CardTitle>{t.calendar.agenda.title}</CardTitle>
+        <CardDescription>{t.calendar.agenda.description}</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
         <UpcomingList
@@ -292,6 +295,7 @@ function ViewPlaceholder({
   label: string;
   description: string;
 }) {
+  const t = useT();
   return (
     <EmptyState
       icon={
@@ -308,7 +312,7 @@ function ViewPlaceholder({
           <path d="M16 2v4M8 2v4M3 10h18" />
         </svg>
       }
-      title={`${label} view — Coming soon`}
+      title={`${label} ${t.calendar.comingSoonSuffix}`}
       description={description}
     />
   );

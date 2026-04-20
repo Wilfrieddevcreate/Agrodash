@@ -66,7 +66,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
+          aria-label={t.nav.openMenu}
           className="inline-flex size-10 shrink-0 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] lg:hidden"
         >
           <Menu className="size-5" />
@@ -93,7 +93,7 @@ export function Header() {
           <Tooltip content={t.nav.searchShort} side="bottom">
             <button
               type="button"
-              aria-label="Search"
+              aria-label={t.nav.searchShort}
               onClick={() => setMobileSearchOpen((v) => !v)}
               className="inline-flex size-10 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] md:hidden"
             >
@@ -106,7 +106,7 @@ export function Header() {
             trigger={
               <button
                 type="button"
-                aria-label="Language"
+                aria-label={t.nav.language}
                 className="inline-flex h-10 items-center gap-1.5 rounded-md px-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] sm:h-9"
               >
                 <Globe className="size-4" />
@@ -114,7 +114,7 @@ export function Header() {
               </button>
             }
           >
-          <DropdownLabel>Language</DropdownLabel>
+          <DropdownLabel>{t.nav.language}</DropdownLabel>
           <DropdownItem onClick={() => setLocale("en")}>
             <span className="flex-1">English</span>
             {locale === "en" && <Check className="size-4 text-[color:var(--color-primary)]" />}
@@ -126,10 +126,10 @@ export function Header() {
         </Dropdown>
 
         {/* Theme */}
-        <Tooltip content="Toggle theme" side="bottom">
+        <Tooltip content={t.nav.toggleTheme} side="bottom">
           <button
             type="button"
-            aria-label="Toggle theme"
+            aria-label={t.nav.toggleTheme}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="relative inline-flex size-10 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] sm:size-9"
           >
@@ -148,10 +148,10 @@ export function Header() {
         <NotificationsMenu />
 
         {/* Help */}
-        <Tooltip content="Help" side="bottom">
+        <Tooltip content={t.nav.help} side="bottom">
           <button
             type="button"
-            aria-label="Help"
+            aria-label={t.nav.help}
             className="hidden size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] lg:inline-flex"
           >
             <HelpCircle className="size-[18px]" />
@@ -187,7 +187,9 @@ export function Header() {
           </div>
           <DropdownSeparator />
           <Link href="/settings" className="block">
-            <DropdownItem icon={<User className="size-4" />}>Profile</DropdownItem>
+            <DropdownItem icon={<User className="size-4" />}>
+              {t.nav.profile}
+            </DropdownItem>
           </Link>
           <Link href="/settings" className="block">
             <DropdownItem icon={<Settings className="size-4" />}>
@@ -226,20 +228,20 @@ function NotificationsMenu() {
   const items = [
     {
       icon: "🟢",
-      title: "Order ADX-2057 delivered",
-      description: "Kwame Mensah · Kumasi, Ghana",
+      title: t.nav.notif.orderDelivered,
+      description: t.nav.notif.orderDeliveredDesc,
       time: new Date(Date.now() - 7 * 60 * 1000).toISOString(),
     },
     {
       icon: "⚠️",
-      title: "Low stock alert",
-      description: "Rice Paddy Seeds below reorder point",
+      title: t.nav.notif.lowStock,
+      description: t.nav.notif.lowStockDesc,
       time: new Date(Date.now() - 46 * 60 * 1000).toISOString(),
     },
     {
       icon: "🧑‍🌾",
-      title: "New customer",
-      description: "Savana Harvest Coop joined",
+      title: t.nav.notif.newCustomer,
+      description: t.nav.notif.newCustomerDesc,
       time: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     },
   ];
@@ -250,7 +252,7 @@ function NotificationsMenu() {
       trigger={
         <button
           type="button"
-          aria-label="Notifications"
+          aria-label={t.nav.notifications}
           className="relative inline-flex size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)]"
         >
           <Bell className="size-[18px]" />
@@ -262,11 +264,11 @@ function NotificationsMenu() {
         <div>
           <div className="text-sm font-semibold">{t.nav.notifications}</div>
           <div className="text-xs text-[color:var(--color-muted-foreground)]">
-            You have 3 unread
+            {t.nav.notificationsUnread.replace("{count}", "3")}
           </div>
         </div>
         <button className="text-xs font-medium text-[color:var(--color-primary)] hover:underline">
-          Mark all read
+          {t.nav.markAllRead}
         </button>
       </div>
       <div className="max-h-80 overflow-y-auto">

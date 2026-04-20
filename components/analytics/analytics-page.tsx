@@ -55,7 +55,7 @@ export function AnalyticsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Insights"
+        eyebrow={t.analytics.eyebrow}
         title={t.analytics.title}
         description={t.analytics.subtitle}
         actions={
@@ -67,10 +67,14 @@ export function AnalyticsPage() {
 
       {/* KPI strip */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <StatMini label="Revenue" value="$1.04M" delta={18.2} />
-        <StatMini label="Orders" value="6,842" delta={8.4} />
-        <StatMini label="AOV" value="$152" delta={3.1} />
-        <StatMini label="Returning customers" value="43%" delta={5.8} />
+        <StatMini label={t.analytics.stats.revenue} value="$1.04M" delta={18.2} />
+        <StatMini label={t.analytics.stats.orders} value="6,842" delta={8.4} />
+        <StatMini label={t.analytics.stats.aov} value="$152" delta={3.1} />
+        <StatMini
+          label={t.analytics.stats.returning}
+          value="43%"
+          delta={5.8}
+        />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:mt-5 sm:gap-4 xl:grid-cols-3">
@@ -119,8 +123,8 @@ export function AnalyticsPage() {
                   formatter={(value, name) => {
                     const n = Number(value);
                     return name === "revenue"
-                      ? [formatCurrency(n), "Revenue"]
-                      : [n.toLocaleString(), "Orders"];
+                      ? [formatCurrency(n), t.analytics.series.revenue]
+                      : [n.toLocaleString(), t.analytics.series.orders];
                   }}
                 />
                 <Legend
@@ -141,7 +145,7 @@ export function AnalyticsPage() {
                   strokeWidth={2.5}
                   dot={{ r: 3, fill: "var(--color-chart-1)" }}
                   activeDot={{ r: 5 }}
-                  name="Revenue"
+                  name={t.analytics.series.revenue}
                 />
                 <Line
                   yAxisId="right"
@@ -151,7 +155,7 @@ export function AnalyticsPage() {
                   strokeWidth={2}
                   dot={{ r: 3, fill: "var(--color-chart-3)" }}
                   activeDot={{ r: 5 }}
-                  name="Orders"
+                  name={t.analytics.series.orders}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -181,7 +185,7 @@ export function AnalyticsPage() {
                 </Pie>
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  formatter={(value) => [`${Number(value)}%`, "Share"]}
+                  formatter={(value) => [`${Number(value)}%`, t.analytics.series.share]}
                 />
               </PieChart>
             </ResponsiveContainer>

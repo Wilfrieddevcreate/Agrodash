@@ -63,7 +63,7 @@ export function OrdersPage() {
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const statusOptions = [
-    { label: "All statuses", value: "all" },
+    { label: t.orders.allStatuses, value: "all" },
     { label: t.orders.status.pending, value: "pending" },
     { label: t.orders.status.processing, value: "processing" },
     { label: t.orders.status.shipped, value: "shipped" },
@@ -74,14 +74,18 @@ export function OrdersPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Fulfillment"
+        eyebrow={t.orders.eyebrow}
         title={t.orders.title}
         description={t.orders.subtitle}
         actions={
           <Button
             size="sm"
             variant="outline"
-            onClick={() => toast.success("Export started", { description: "CSV preparing..." })}
+            onClick={() =>
+              toast.success(t.orders.toast.exportStarted, {
+                description: t.orders.toast.exportStartedDesc,
+              })
+            }
           >
             <Download /> {t.orders.export}
           </Button>
@@ -138,7 +142,11 @@ export function OrdersPage() {
                   </div>
                   <div className="mt-2 flex items-center justify-between gap-2 text-xs text-[color:var(--color-muted-foreground)]">
                     <span>
-                      {o.items.length} item{o.items.length > 1 ? "s" : ""} ·{" "}
+                      {o.items.length}{" "}
+                      {o.items.length > 1
+                        ? t.orders.itemsPlural
+                        : t.orders.itemsSingular}
+                      {" · "}
                       {formatDate(o.placedAt)}
                     </span>
                     <span className="font-mono text-sm font-semibold tabular-nums text-[color:var(--color-foreground)]">
@@ -198,7 +206,10 @@ export function OrdersPage() {
                   </div>
                 </TableCell>
                 <TableCell className="text-sm text-[color:var(--color-muted-foreground)]">
-                  {o.items.length} item{o.items.length > 1 ? "s" : ""}
+                  {o.items.length}{" "}
+                  {o.items.length > 1
+                    ? t.orders.itemsPlural
+                    : t.orders.itemsSingular}
                 </TableCell>
                 <TableCell className="font-mono font-semibold tabular-nums">
                   {formatCurrency(o.total)}

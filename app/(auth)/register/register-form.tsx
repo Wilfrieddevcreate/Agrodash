@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { AuthCard } from "@/components/auth/auth-card";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { PasswordInput } from "@/components/auth/password-input";
+import { useT } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 
 type Score = 0 | 1 | 2 | 3 | 4;
@@ -23,14 +24,6 @@ function scorePassword(pw: string): Score {
   return s as Score;
 }
 
-const STRENGTH_LABELS = [
-  "Too short",
-  "Weak",
-  "Fair",
-  "Good",
-  "Strong",
-] as const;
-
 const SEGMENT_COLORS: Record<Score, string> = {
   0: "bg-[color:var(--color-muted)]",
   1: "bg-[color:var(--color-destructive)]",
@@ -40,6 +33,7 @@ const SEGMENT_COLORS: Record<Score, string> = {
 };
 
 export function RegisterForm() {
+  const t = useT();
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -49,70 +43,78 @@ export function RegisterForm() {
 
   const score = scorePassword(password);
 
+  const strengthLabels: Record<Score, string> = {
+    0: t.auth.signUp.passwordStrength.tooShort,
+    1: t.auth.signUp.passwordStrength.weak,
+    2: t.auth.signUp.passwordStrength.fair,
+    3: t.auth.signUp.passwordStrength.good,
+    4: t.auth.signUp.passwordStrength.strong,
+  };
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!terms) {
-      toast.error("Please accept the Terms", {
-        description: "You need to agree before creating your workspace.",
+      toast.error(t.auth.signUp.toastTermsError, {
+        description: t.auth.signUp.toastTermsErrorDesc,
       });
       return;
     }
     setSubmitting(true);
-    toast.success("Workspace created", {
-      description: "Redirecting to dashboard...",
+    toast.success(t.auth.signUp.toastSuccess, {
+      description: t.auth.signUp.toastSuccessDesc,
     });
     window.setTimeout(() => setSubmitting(false), 900);
   }
 
   return (
     <AuthCard
-      title="Create your workspace"
-      description="Start managing your agribusiness in minutes"
+      title={t.auth.signUp.title}
+      description={t.auth.signUp.subtitle}
       footer={
         <>
-          Already have an account?{" "}
+          {t.auth.signUp.hasAccount}{" "}
           <Link
             href="/login"
             className="font-semibold text-[color:var(--color-foreground)] underline-offset-4 hover:underline"
           >
-            Sign in
+            {t.auth.signUp.signInLink}
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <div className="space-y-1.5">
-          <Label htmlFor="name">Full name</Label>
+          <Label htmlFor="name">{t.auth.signUp.fullName}</Label>
           <Input
             id="name"
             autoComplete="name"
             required
-            placeholder="Alex Rivera"
+            placeholder={t.auth.signUp.fullNamePlaceholder}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="email">Work email</Label>
+          <Label htmlFor="email">{t.auth.signUp.workEmail}</Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
             required
-            placeholder="you@company.com"
+            placeholder={t.auth.signUp.workEmailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t.auth.signUp.password}</Label>
           <PasswordInput
             id="password"
             autoComplete="new-password"
             required
-            placeholder="At least 8 characters"
+            placeholder={t.auth.signUp.passwordPlaceholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -144,19 +146,19 @@ export function RegisterForm() {
           >
             <span>
               {password.length === 0
-                ? "8+ characters, with upper case, number & symbol"
-                : `Strength: ${STRENGTH_LABELS[score]}`}
+                ? t.auth.signUp.passwordHint
+                : `${t.auth.signUp.strengthLabel}: ${strengthLabels[score]}`}
             </span>
           </FieldHint>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="org">Organization name</Label>
+          <Label htmlFor="org">{t.auth.signUp.org}</Label>
           <Input
             id="org"
             autoComplete="organization"
             required
-            placeholder="Greenfield Co-op"
+            placeholder={t.auth.signUp.orgPlaceholder}
             value={org}
             onChange={(e) => setOrg(e.target.value)}
           />
@@ -167,25 +169,25 @@ export function RegisterForm() {
             id="terms"
             checked={terms}
             onCheckedChange={setTerms}
-            aria-label="Agree to terms and privacy policy"
+            aria-label={t.auth.signUp.termsAria}
           />
           <Label
             htmlFor="terms"
             className="cursor-pointer select-none text-[12.5px] leading-relaxed text-[color:var(--color-muted-foreground)]"
           >
-            I agree to the{" "}
+            {t.auth.signUp.terms}{" "}
             <Link
               href="/"
               className="font-semibold text-[color:var(--color-foreground)] underline-offset-4 hover:underline"
             >
-              Terms
+              {t.auth.signUp.termsLink}
             </Link>{" "}
-            and{" "}
+            {t.auth.signUp.and}{" "}
             <Link
               href="/"
               className="font-semibold text-[color:var(--color-foreground)] underline-offset-4 hover:underline"
             >
-              Privacy Policy
+              {t.auth.signUp.privacyLink}
             </Link>
             .
           </Label>
@@ -198,12 +200,12 @@ export function RegisterForm() {
           className="w-full"
           disabled={submitting}
         >
-          {submitting ? "Creating..." : "Create workspace"}
+          {submitting ? t.auth.signUp.submitting : t.auth.signUp.submit}
           <ArrowRight className="size-4" />
         </Button>
       </form>
 
-      <Divider>Or continue with</Divider>
+      <Divider>{t.auth.signUp.orContinue}</Divider>
 
       <SocialButtons action="sign up" />
     </AuthCard>

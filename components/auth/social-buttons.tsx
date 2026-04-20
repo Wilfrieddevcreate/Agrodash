@@ -3,6 +3,7 @@
 import * as React from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/components/providers/language-provider";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -52,11 +53,14 @@ function GitHubIcon({ className }: { className?: string }) {
 export function SocialButtons({
   action = "sign in",
 }: {
-  action?: string;
+  action?: "sign in" | "sign up";
 }) {
+  const t = useT();
   function handle(provider: string) {
-    toast(`${provider} ${action}`, {
-      description: "This demo doesn't connect to a real provider.",
+    const label =
+      action === "sign up" ? t.auth.signUp.submit : t.auth.signIn.submit;
+    toast(`${provider} · ${label}`, {
+      description: t.auth.shared.socialToastDesc,
     });
   }
 
@@ -70,7 +74,7 @@ export function SocialButtons({
         className="w-full"
       >
         <GoogleIcon className="size-4" />
-        <span>Google</span>
+        <span>{t.auth.signIn.google}</span>
       </Button>
       <Button
         type="button"
@@ -80,7 +84,7 @@ export function SocialButtons({
         className="w-full"
       >
         <GitHubIcon className="size-4" />
-        <span>GitHub</span>
+        <span>{t.auth.signIn.github}</span>
       </Button>
     </div>
   );

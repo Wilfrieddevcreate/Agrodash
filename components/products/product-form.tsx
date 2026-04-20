@@ -30,8 +30,8 @@ export function ProductForm({ open, onOpenChange, product }: ProductFormProps) {
     onOpenChange(false);
     toast.success(product ? t.common.toast.saved : t.common.toast.created, {
       description: product
-        ? `${product.name} was updated.`
-        : "Your new product has been added.",
+        ? t.products.form.toastUpdated.replace("{name}", product.name)
+        : t.products.form.toastCreated,
     });
   }
 
@@ -45,8 +45,8 @@ export function ProductForm({ open, onOpenChange, product }: ProductFormProps) {
         title={product ? t.products.form.editTitle : t.products.form.addTitle}
         description={
           product
-            ? `SKU · ${product.sku}`
-            : "Fill in the details to add a product to your catalog."
+            ? t.products.form.editDescription.replace("{sku}", product.sku)
+            : t.products.form.addDescription
         }
         widthClass="max-w-2xl"
       >
@@ -62,7 +62,7 @@ export function ProductForm({ open, onOpenChange, product }: ProductFormProps) {
               <Input
                 id="name"
                 defaultValue={product?.name ?? ""}
-                placeholder="NPK 20-10-10 Fertilizer"
+                placeholder={t.products.form.namePlaceholder}
                 required
               />
             </div>
@@ -73,7 +73,7 @@ export function ProductForm({ open, onOpenChange, product }: ProductFormProps) {
               <Input
                 id="sku"
                 defaultValue={product?.sku ?? ""}
-                placeholder="FERT-NPK-201010"
+                placeholder={t.products.form.skuPlaceholder}
                 required
               />
             </div>
@@ -137,7 +137,7 @@ export function ProductForm({ open, onOpenChange, product }: ProductFormProps) {
               <Input
                 id="unit"
                 defaultValue={product?.unit ?? ""}
-                placeholder="kg / bag / L / unit"
+                placeholder={t.products.form.unitPlaceholder}
               />
             </div>
             <div className="sm:col-span-2">
@@ -147,7 +147,7 @@ export function ProductForm({ open, onOpenChange, product }: ProductFormProps) {
               <Input
                 id="supplier"
                 defaultValue={product?.supplier ?? ""}
-                placeholder="Supplier name"
+                placeholder={t.products.form.supplierPlaceholder}
               />
             </div>
           </DialogBody>

@@ -4,11 +4,11 @@ import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar-mock";
+import { useT } from "@/components/providers/language-provider";
 import {
   daysInMonthGrid,
   isSameDay,
   isSameMonth,
-  WEEKDAYS_SHORT,
 } from "./date-utils";
 import { EventPill } from "./event-pill";
 
@@ -35,6 +35,16 @@ export function MonthGrid({
   today,
   className,
 }: MonthGridProps) {
+  const t = useT();
+  const weekdays = [
+    t.calendar.weekdays.mon,
+    t.calendar.weekdays.tue,
+    t.calendar.weekdays.wed,
+    t.calendar.weekdays.thu,
+    t.calendar.weekdays.fri,
+    t.calendar.weekdays.sat,
+    t.calendar.weekdays.sun,
+  ];
   const cells = React.useMemo(() => daysInMonthGrid(currentDate), [currentDate]);
 
   // Index events by local YYYY-MM-DD of their start date for fast lookup.
@@ -72,7 +82,7 @@ export function MonthGrid({
         role="row"
         className="grid grid-cols-7 border-b border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40"
       >
-        {WEEKDAYS_SHORT.map((w) => (
+        {weekdays.map((w) => (
           <div
             key={w}
             role="columnheader"
@@ -153,7 +163,7 @@ export function MonthGrid({
                       }}
                       className="ml-1 mt-0.5 text-[11px] font-medium text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-foreground)]"
                     >
-                      +{overflow} more
+                      +{overflow} {t.calendar.grid.more}
                     </span>
                   )}
                 </div>

@@ -104,7 +104,7 @@ export function ProductsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Inventory"
+        eyebrow={t.products.eyebrow}
         title={t.products.title}
         description={t.products.subtitle}
         actions={
@@ -196,7 +196,7 @@ export function ProductsPage() {
                   setSearch("");
                 }}
               >
-                Reset filters
+                {t.products.resetFilters}
               </Button>
             }
           />
@@ -249,7 +249,7 @@ export function ProductsPage() {
                     <div className="mt-2 flex items-end justify-between gap-3">
                       <div>
                         <div className="text-[11px] text-[color:var(--color-muted-foreground)]">
-                          Stock
+                          {t.products.stockLabel}
                         </div>
                         <div className="font-mono text-sm tabular-nums">
                           {formatNumber(p.stock)}{" "}
@@ -260,7 +260,7 @@ export function ProductsPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-[11px] text-[color:var(--color-muted-foreground)]">
-                          Price
+                          {t.products.priceLabel}
                         </div>
                         <div className="font-mono text-base font-semibold tabular-nums">
                           {formatCurrency(p.price)}
@@ -421,7 +421,7 @@ export function ProductsPage() {
                       {formatCurrency(p.price)}
                     </div>
                     <div className="text-[11px] text-[color:var(--color-muted-foreground)]">
-                      Cost {formatCurrency(p.cost)}
+                      {t.products.costLabel} {formatCurrency(p.cost)}
                     </div>
                   </div>
                   <div className="text-right">

@@ -4,8 +4,9 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { CalendarX } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { CalendarEvent } from "@/lib/calendar-mock";
-import { eventKindColor, eventKindLabel } from "@/lib/calendar-mock";
+import type { CalendarEvent, CalendarEventKind } from "@/lib/calendar-mock";
+import { eventKindColor } from "@/lib/calendar-mock";
+import { useLanguage, useT } from "@/components/providers/language-provider";
 import { formatEventTimeRange, formatMonthShort } from "./date-utils";
 
 export interface UpcomingListProps {
@@ -27,6 +28,9 @@ export function UpcomingList({
   className,
   grouped = false,
 }: UpcomingListProps) {
+  const t = useT();
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
   const reference = from ?? new Date();
 
   const upcoming = React.useMemo(() => {
@@ -45,9 +49,11 @@ export function UpcomingList({
         )}
       >
         <CalendarX className="size-5 text-[color:var(--color-muted-foreground)]" />
-        <p className="text-sm font-medium">Nothing scheduled</p>
+        <p className="text-sm font-medium">
+          {t.calendar.upcoming.emptyTitle}
+        </p>
         <p className="text-xs text-[color:var(--color-muted-foreground)]">
-          Your upcoming events will appear here.
+          {t.calendar.upcoming.emptyDescription}
         </p>
       </div>
     );
@@ -73,8 +79,8 @@ export function UpcomingList({
                 {group.date.getDate()}
               </span>
               <span className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)]">
-                {formatMonthShort(group.date)} ·{" "}
-                {new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+                {formatMonthShort(group.date, localeTag)} ·{" "}
+                {new Intl.DateTimeFormat(localeTag, { weekday: "long" }).format(
                   group.date
                 )}
               </span>
@@ -118,9 +124,22 @@ function UpcomingRow({
   onClick?: (event: CalendarEvent) => void;
   delay?: number;
 }) {
+  const t = useT();
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
   const start = new Date(event.start);
   const end = new Date(event.end);
   const color = event.color ?? eventKindColor[event.kind];
+
+  const kindLabel: Record<CalendarEventKind, string> = {
+    harvest: t.calendar.kinds.harvest,
+    planting: t.calendar.kinds.planting,
+    delivery: t.calendar.kinds.delivery,
+    meeting: t.calendar.kinds.meeting,
+    inspection: t.calendar.kinds.inspection,
+    payment: t.calendar.kinds.payment,
+    training: t.calendar.kinds.training,
+  };
 
   return (
     <motion.li
@@ -145,7 +164,7 @@ function UpcomingRow({
         >
           <div className="leading-none">
             <div className="text-[9px] font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)]">
-              {formatMonthShort(start)}
+              {formatMonthShort(start, localeTag)}
             </div>
             <div className="mt-0.5 font-mono text-[15px] font-semibold tabular-nums">
               {start.getDate()}
@@ -163,11 +182,14 @@ function UpcomingRow({
               style={{ backgroundColor: color }}
             />
             <span className="truncate tabular-nums">
-              {formatEventTimeRange(start, end, event.allDay)}
+              {formatEventTimeRange(start, end, event.allDay, {
+                locale: localeTag,
+                allDayLabel: t.calendar.allDay,
+              })}
             </span>
             <span aria-hidden>·</span>
             <span className="shrink-0 capitalize">
-              {eventKindLabel[event.kind]}
+              {kindLabel[event.kind]}
             </span>
           </div>
         </div>

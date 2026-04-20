@@ -5,6 +5,8 @@ import { CalendarClock, Flame, MessageSquare, Paperclip } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useLanguage, useT } from "@/components/providers/language-provider";
+import type { Dictionary } from "@/lib/i18n";
 import { cn, formatDate } from "@/lib/utils";
 import type {
   KanbanCard,
@@ -22,11 +24,13 @@ const priorityAccent: Record<KanbanPriority, string> = {
   urgent: "var(--color-destructive)",
 };
 
-const priorityLabel: Record<KanbanPriority, string> = {
-  low: "Low",
-  medium: "Medium",
-  high: "High",
-  urgent: "Urgent",
+const LABEL_KEY_MAP: Record<string, keyof Dictionary["kanban"]["labels"]> = {
+  Harvest: "harvest",
+  Logistics: "logistics",
+  Compliance: "compliance",
+  Contracts: "contracts",
+  Training: "training",
+  "R&D": "rnd",
 };
 
 type DueInfo =
@@ -34,7 +38,11 @@ type DueInfo =
   | { kind: "soon"; label: string }
   | { kind: "future"; label: string };
 
-function describeDue(iso: string): DueInfo {
+function describeDue(
+  iso: string,
+  t: Dictionary,
+  localeTag: string
+): DueInfo {
   const then = new Date(iso).getTime();
   const diffDays = Math.round((then - NOW_MS) / (24 * 60 * 60 * 1000));
 
@@ -42,13 +50,21 @@ function describeDue(iso: string): DueInfo {
     const n = Math.abs(diffDays);
     return {
       kind: "overdue",
-      label: n === 1 ? "1 day overdue" : `${n} days overdue`,
+      label:
+        n === 1
+          ? t.kanban.card.dayOverdue
+          : `${n} ${t.kanban.card.daysOverdueSuffix}`,
     };
   }
-  if (diffDays === 0) return { kind: "soon", label: "Due today" };
-  if (diffDays === 1) return { kind: "soon", label: "Due tomorrow" };
-  if (diffDays <= 3) return { kind: "soon", label: `In ${diffDays} days` };
-  return { kind: "future", label: formatDate(iso) };
+  if (diffDays === 0) return { kind: "soon", label: t.kanban.card.dueTodayLabel };
+  if (diffDays === 1)
+    return { kind: "soon", label: t.kanban.card.dueTomorrowLabel };
+  if (diffDays <= 3)
+    return {
+      kind: "soon",
+      label: `${t.kanban.card.inDaysPrefix} ${diffDays} ${t.kanban.card.inDaysSuffix}`,
+    };
+  return { kind: "future", label: formatDate(iso, localeTag) };
 }
 
 export interface KanbanCardItemProps {
@@ -68,6 +84,22 @@ export function KanbanCardItem({
   onDragStart,
   onDragEnd,
 }: KanbanCardItemProps) {
+  const t = useT();
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
+
+  const priorityLabel: Record<KanbanPriority, string> = {
+    low: t.kanban.priority.low,
+    medium: t.kanban.priority.medium,
+    high: t.kanban.priority.high,
+    urgent: t.kanban.priority.urgent,
+  };
+
+  function localizeLabel(name: string): string {
+    const key = LABEL_KEY_MAP[name];
+    return key ? t.kanban.labels[key] : name;
+  }
+
   const cardLabels = card.labels
     .map((id) => labels.find((l) => l.id === id))
     .filter((l): l is KanbanLabel => Boolean(l));
@@ -78,7 +110,7 @@ export function KanbanCardItem({
   const visibleAssignees = card.assignees.slice(0, 3);
   const overflowAssignees = card.assignees.length - visibleAssignees.length;
 
-  const due = card.dueDate ? describeDue(card.dueDate) : null;
+  const due = card.dueDate ? describeDue(card.dueDate, t, localeTag) : null;
 
   return (
     <div
@@ -124,7 +156,7 @@ export function KanbanCardItem({
                 className="size-1.5 shrink-0 rounded-full"
                 style={{ backgroundColor: label.color }}
               />
-              <span className="truncate">{label.name}</span>
+              <span className="truncate">{localizeLabel(label.name)}</span>
             </span>
           ))}
           {overflowLabels > 0 && (
@@ -133,14 +165,16 @@ export function KanbanCardItem({
             </span>
           )}
           {card.priority === "urgent" && (
-            <Tooltip content="Urgent">
+            <Tooltip content={t.kanban.card.urgentTooltip}>
               <span className="ml-auto inline-flex size-5 items-center justify-center rounded-full bg-[color:var(--color-destructive)]/12 text-[color:var(--color-destructive)] ring-1 ring-inset ring-[color:var(--color-destructive)]/25">
                 <Flame className="size-3" />
               </span>
             </Tooltip>
           )}
           {card.priority !== "urgent" && (
-            <Tooltip content={`Priority: ${priorityLabel[card.priority]}`}>
+            <Tooltip
+              content={`${t.kanban.priority.tooltipPrefix} ${priorityLabel[card.priority]}`}
+            >
               <span
                 className="ml-auto size-2 rounded-full"
                 style={{ backgroundColor: priorityAccent[card.priority] }}
@@ -166,7 +200,7 @@ export function KanbanCardItem({
       {card.subtasks && card.subtasks.total > 0 && (
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-[11px] font-medium text-[color:var(--color-muted-foreground)]">
-            <span>Subtasks</span>
+            <span>{t.kanban.card.subtasks}</span>
             <span>
               {card.subtasks.done}/{card.subtasks.total}
             </span>
@@ -199,7 +233,7 @@ export function KanbanCardItem({
             </span>
           ) : (
             <span className="text-[10px] font-medium text-[color:var(--color-muted-foreground)]">
-              No due date
+              {t.kanban.card.noDueDate}
             </span>
           )}
         </div>

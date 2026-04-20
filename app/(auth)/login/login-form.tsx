@@ -10,8 +10,10 @@ import { Switch } from "@/components/ui/switch";
 import { AuthCard } from "@/components/auth/auth-card";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { PasswordInput } from "@/components/auth/password-input";
+import { useT } from "@/components/providers/language-provider";
 
 export function LoginForm() {
+  const t = useT();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [remember, setRemember] = React.useState(true);
@@ -20,8 +22,8 @@ export function LoginForm() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    toast.success("Welcome back", {
-      description: "Redirecting to dashboard...",
+    toast.success(t.auth.signIn.toastSuccess, {
+      description: t.auth.signIn.toastSuccessDesc,
     });
     // Reset submitting after a short delay so the button doesn't stay locked
     // in this demo (no real auth or navigation occurs).
@@ -30,29 +32,29 @@ export function LoginForm() {
 
   return (
     <AuthCard
-      title="Welcome back"
-      description="Sign in to your AgroDash workspace"
+      title={t.auth.signIn.title}
+      description={t.auth.signIn.subtitle}
       footer={
         <>
-          Don&apos;t have an account?{" "}
+          {t.auth.signIn.noAccount}{" "}
           <Link
             href="/register"
             className="font-semibold text-[color:var(--color-foreground)] underline-offset-4 hover:underline"
           >
-            Create one
+            {t.auth.signIn.createOne}
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <div className="space-y-1.5">
-          <Label htmlFor="email">Work email</Label>
+          <Label htmlFor="email">{t.auth.signIn.email}</Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
             required
-            placeholder="you@company.com"
+            placeholder={t.auth.signIn.emailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -60,19 +62,19 @@ export function LoginForm() {
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t.auth.signIn.password}</Label>
             <Link
               href="/forgot-password"
               className="text-[12px] font-medium text-[color:var(--color-muted-foreground)] underline-offset-4 transition-colors hover:text-[color:var(--color-foreground)] hover:underline"
             >
-              Forgot password?
+              {t.auth.signIn.forgot}
             </Link>
           </div>
           <PasswordInput
             id="password"
             autoComplete="current-password"
             required
-            placeholder="Enter your password"
+            placeholder={t.auth.signIn.passwordPlaceholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -84,10 +86,10 @@ export function LoginForm() {
               id="remember"
               checked={remember}
               onCheckedChange={setRemember}
-              aria-label="Remember me on this device"
+              aria-label={t.auth.signIn.rememberAria}
             />
             <Label htmlFor="remember" className="cursor-pointer select-none">
-              Remember me
+              {t.auth.signIn.remember}
             </Label>
           </div>
         </div>
@@ -99,12 +101,12 @@ export function LoginForm() {
           className="w-full"
           disabled={submitting}
         >
-          {submitting ? "Signing in..." : "Sign in"}
+          {submitting ? t.auth.signIn.submitting : t.auth.signIn.submit}
           <ArrowRight className="size-4" />
         </Button>
       </form>
 
-      <Divider>Or continue with</Divider>
+      <Divider>{t.auth.signIn.orContinue}</Divider>
 
       <SocialButtons action="sign in" />
     </AuthCard>

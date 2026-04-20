@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Tooltip } from "@/components/ui/tooltip";
 import { PageHeader } from "@/components/layout/page-header";
+import { useT } from "@/components/providers/language-provider";
+import type { Dictionary } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   kanbanCards as initialCards,
@@ -34,15 +36,24 @@ import { TaskDialog } from "./task-dialog";
 type PriorityFilter = "all" | KanbanPriority;
 type AssigneeFilter = string; // "all" or assignee id
 
-const priorityFilterOptions: Array<{ label: string; value: PriorityFilter }> = [
-  { label: "All priorities", value: "all" },
-  { label: "Urgent", value: "urgent" },
-  { label: "High", value: "high" },
-  { label: "Medium", value: "medium" },
-  { label: "Low", value: "low" },
-];
+const LABEL_KEY_MAP: Record<string, keyof Dictionary["kanban"]["labels"]> = {
+  Harvest: "harvest",
+  Logistics: "logistics",
+  Compliance: "compliance",
+  Contracts: "contracts",
+  Training: "training",
+  "R&D": "rnd",
+};
+
+const COLUMN_KEY_MAP: Record<KanbanColumnId, keyof Dictionary["kanban"]["columns"]> = {
+  backlog: "backlog",
+  in_progress: "in_progress",
+  review: "review",
+  done: "done",
+};
 
 export function KanbanPage() {
+  const t = useT();
   const [cards, setCards] = React.useState<KanbanCard[]>(initialCards);
   const [search, setSearch] = React.useState("");
   const [priority, setPriority] = React.useState<PriorityFilter>("all");
@@ -63,6 +74,19 @@ export function KanbanPage() {
   const [createColumnId, setCreateColumnId] =
     React.useState<KanbanColumnId>("backlog");
 
+  const priorityFilterOptions: Array<{ label: string; value: PriorityFilter }> = [
+    { label: t.kanban.allPriorities, value: "all" },
+    { label: t.kanban.priority.urgent, value: "urgent" },
+    { label: t.kanban.priority.high, value: "high" },
+    { label: t.kanban.priority.medium, value: "medium" },
+    { label: t.kanban.priority.low, value: "low" },
+  ];
+
+  const columnTitle = React.useCallback(
+    (id: KanbanColumnId) => t.kanban.columns[COLUMN_KEY_MAP[id]],
+    [t]
+  );
+
   // Unique assignees, for the filter select
   const assigneePool = React.useMemo<KanbanAssignee[]>(() => {
     const map = new Map<string, KanbanAssignee>();
@@ -78,10 +102,10 @@ export function KanbanPage() {
 
   const assigneeOptions = React.useMemo(
     () => [
-      { label: "All assignees", value: "all" },
+      { label: t.kanban.allAssignees, value: "all" },
       ...assigneePool.map((a) => ({ label: a.name, value: a.id })),
     ],
-    [assigneePool]
+    [assigneePool, t.kanban.allAssignees]
   );
 
   // Filtered cards
@@ -206,7 +230,7 @@ export function KanbanPage() {
     );
     const target = kanbanColumns.find((c) => c.id === columnId);
     if (target) {
-      toast.success(`Task moved to ${target.title}`);
+      toast.success(`${t.kanban.toasts.movedPrefix} ${columnTitle(target.id)}`);
     }
     setDraggingId(null);
     setDropTarget(null);
@@ -267,33 +291,38 @@ export function KanbanPage() {
 
   const activeCard = cards.find((c) => c.id === activeCardId);
 
+  function localizeLabelName(raw: string): string {
+    const key = LABEL_KEY_MAP[raw];
+    return key ? t.kanban.labels[key] : raw;
+  }
+
   return (
     <>
       <PageHeader
-        eyebrow="Operations"
-        title="Board"
-        description="Coordinate fieldwork, logistics and compliance across your teams."
+        eyebrow={t.kanban.eyebrow}
+        title={t.kanban.title}
+        description={t.kanban.subtitle}
         actions={
           <>
             <Button
               size="sm"
               variant="outline"
               onClick={() =>
-                toast.message("Filters", {
-                  description: "Advanced filtering coming soon.",
+                toast.message(t.kanban.filters, {
+                  description: t.kanban.filtersDesc,
                 })
               }
             >
-              <Filter /> Filters
+              <Filter /> {t.kanban.filters}
             </Button>
-            <Tooltip content="Share board">
+            <Tooltip content={t.kanban.share}>
               <Button
                 size="iconSm"
                 variant="outline"
-                aria-label="Share board"
+                aria-label={t.kanban.shareAria}
                 onClick={() =>
-                  toast.success("Link copied", {
-                    description: "Board link is on your clipboard.",
+                  toast.success(t.kanban.shareToast, {
+                    description: t.kanban.shareToastDesc,
                   })
                 }
               >
@@ -305,7 +334,7 @@ export function KanbanPage() {
               variant="primary"
               onClick={() => openCreate("backlog")}
             >
-              <Plus /> New task
+              <Plus /> {t.kanban.new}
             </Button>
           </>
         }
@@ -322,7 +351,7 @@ export function KanbanPage() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search tasks by title..."
+              placeholder={t.kanban.search}
               className="pl-9"
             />
           </div>
@@ -371,7 +400,7 @@ export function KanbanPage() {
                     className="size-1.5 rounded-full"
                     style={{ backgroundColor: label.color }}
                   />
-                  {label.name}
+                  {localizeLabelName(label.name)}
                 </button>
               );
             })}
@@ -382,7 +411,7 @@ export function KanbanPage() {
                 size="xs"
                 onClick={clearFilters}
               >
-                <SlidersHorizontal /> Reset
+                <SlidersHorizontal /> {t.kanban.reset}
               </Button>
             )}
           </div>
@@ -402,6 +431,7 @@ export function KanbanPage() {
                 filtersActive={filtersActive}
                 isDropTarget={dropTarget === column.id}
                 draggingId={draggingId}
+                columnTitle={columnTitle(column.id)}
                 onDragOver={(e) => handleColumnDragOver(column.id, e)}
                 onDragLeave={(e) => handleColumnDragLeave(column.id, e)}
                 onDrop={(e) => handleColumnDrop(column.id, e)}
@@ -447,6 +477,7 @@ interface KanbanColumnProps {
   filtersActive: boolean;
   isDropTarget: boolean;
   draggingId: string | null;
+  columnTitle: string;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
@@ -467,6 +498,7 @@ function KanbanColumn({
   filtersActive,
   isDropTarget,
   draggingId,
+  columnTitle,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -476,6 +508,7 @@ function KanbanColumn({
   onCardClick,
   onAddCard,
 }: KanbanColumnProps) {
+  const t = useT();
   const ids = cards.map((c) => c.id);
 
   return (
@@ -498,16 +531,16 @@ function KanbanColumn({
           style={{ backgroundColor: column.accent }}
         />
         <h3 className="truncate text-[13px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground)]">
-          {column.title}
+          {columnTitle}
         </h3>
         <span className="inline-flex min-w-[22px] items-center justify-center rounded-full bg-[color:var(--color-card)] px-1.5 py-0.5 text-[11px] font-semibold text-[color:var(--color-muted-foreground)] ring-1 ring-inset ring-[color:var(--color-border)]">
           {totalCount}
         </span>
-        <Tooltip content={`Add to ${column.title}`}>
+        <Tooltip content={`${t.kanban.addToPrefix} ${columnTitle}`}>
           <button
             type="button"
             onClick={onAddCard}
-            aria-label={`Add task to ${column.title}`}
+            aria-label={`${t.kanban.addTaskToPrefix} ${columnTitle}`}
             className="ml-auto inline-flex size-7 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-card)] hover:text-[color:var(--color-foreground)]"
           >
             <Plus className="size-4" />
@@ -567,7 +600,7 @@ function KanbanColumn({
           className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-medium text-[color:var(--color-muted-foreground)] transition-all hover:bg-[color:var(--color-card)] hover:text-[color:var(--color-foreground)]"
         >
           <Plus className="size-3.5" />
-          Add card
+          {t.kanban.addCard}
         </button>
       </div>
     </div>
@@ -577,20 +610,18 @@ function KanbanColumn({
 /* ─────────────── Empty state ─────────────── */
 
 function ColumnEmpty({ filtersActive }: { filtersActive: boolean }) {
+  const t = useT();
   return (
     <div className="m-1.5 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[color:var(--color-border)]/70 bg-[color:var(--color-card)]/40 px-3 py-8 text-center">
       <span className="inline-flex size-8 items-center justify-center rounded-lg bg-[color:var(--color-card)] text-[color:var(--color-muted-foreground)] ring-1 ring-inset ring-[color:var(--color-border)]">
         <LayoutGrid className="size-4" />
       </span>
       <p className="text-xs font-semibold text-[color:var(--color-foreground)]">
-        {filtersActive ? "No matches" : "No tasks yet"}
+        {filtersActive ? t.kanban.noMatches : t.kanban.emptyColumn}
       </p>
       <p className="text-[11px] leading-relaxed text-[color:var(--color-muted-foreground)]">
-        {filtersActive
-          ? "Try adjusting your filters."
-          : "Drag a card here or add one."}
+        {filtersActive ? t.kanban.noMatchesDesc : t.kanban.emptyColumnDesc}
       </p>
     </div>
   );
 }
-

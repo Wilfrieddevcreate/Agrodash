@@ -25,8 +25,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Logo } from "@/components/layout/logo";
+import { useLanguage, useT } from "@/components/providers/language-provider";
 import { invoices } from "@/lib/invoices-mock";
 import { customers } from "@/lib/mock-data";
+import type { Dictionary } from "@/lib/i18n";
 import type { InvoiceStatus } from "@/lib/types";
 import { cn, formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 
@@ -41,14 +43,6 @@ const statusVariant: Record<
   void: "outline",
 };
 
-const statusLabel: Record<InvoiceStatus, string> = {
-  paid: "Paid",
-  sent: "Sent",
-  draft: "Draft",
-  overdue: "Overdue",
-  void: "Void",
-};
-
 interface TimelineEvent {
   label: string;
   description?: string;
@@ -58,10 +52,12 @@ interface TimelineEvent {
 }
 
 function buildTimeline(
+  t: Dictionary,
   status: InvoiceStatus,
   issueDate: string,
   dueDate: string,
-  paidAt: string | undefined
+  paidAt: string | undefined,
+  localeTag: string
 ): TimelineEvent[] {
   const MS_HOUR = 60 * 60 * 1000;
   const issueMs = new Date(issueDate).getTime();
@@ -70,8 +66,8 @@ function buildTimeline(
 
   const events: TimelineEvent[] = [
     {
-      label: "Invoice issued",
-      description: "Drafted and saved to the ledger.",
+      label: t.invoices.detail.timeline.issued,
+      description: t.invoices.detail.timeline.issuedDesc,
       date: issueDate,
       tone: "done",
       icon: <FileText className="size-3.5" />,
@@ -80,8 +76,8 @@ function buildTimeline(
 
   if (status !== "draft") {
     events.push({
-      label: "Sent to customer",
-      description: "Delivered by email with payment link.",
+      label: t.invoices.detail.timeline.sent,
+      description: t.invoices.detail.timeline.sentDesc,
       date: sentMs,
       tone: "done",
       icon: <Send className="size-3.5" />,
@@ -90,47 +86,47 @@ function buildTimeline(
 
   if (status === "overdue") {
     events.push({
-      label: "Reminder sent",
-      description: "Automatic follow-up emailed.",
+      label: t.invoices.detail.timeline.reminder,
+      description: t.invoices.detail.timeline.reminderDesc,
       date: reminderMs,
       tone: "done",
       icon: <Send className="size-3.5" />,
     });
     events.push({
-      label: "Payment overdue",
-      description: `Past due since ${formatDate(dueDate)}`,
+      label: t.invoices.detail.timeline.overdue,
+      description: `${t.invoices.detail.timeline.overdueDescPrefix} ${formatDate(dueDate, localeTag)}`,
       date: dueDate,
       tone: "pending",
       icon: <CheckCircle2 className="size-3.5" />,
     });
   } else if (status === "paid" && paidAt) {
     events.push({
-      label: "Payment received",
-      description: "Marked as paid in full.",
+      label: t.invoices.detail.timeline.paid,
+      description: t.invoices.detail.timeline.paidDesc,
       date: paidAt,
       tone: "done",
       icon: <BadgeCheck className="size-3.5" />,
     });
   } else if (status === "sent") {
     events.push({
-      label: "Awaiting payment",
-      description: `Due on ${formatDate(dueDate)}`,
+      label: t.invoices.detail.timeline.awaiting,
+      description: `${t.invoices.detail.timeline.awaitingDescPrefix} ${formatDate(dueDate, localeTag)}`,
       date: dueDate,
       tone: "muted",
       icon: <CheckCircle2 className="size-3.5" />,
     });
   } else if (status === "void") {
     events.push({
-      label: "Invoice voided",
-      description: "Cancelled and removed from receivables.",
+      label: t.invoices.detail.timeline.voided,
+      description: t.invoices.detail.timeline.voidedDesc,
       date: sentMs,
       tone: "pending",
       icon: <CheckCircle2 className="size-3.5" />,
     });
   } else {
     events.push({
-      label: "Pending send-out",
-      description: "Draft is awaiting review.",
+      label: t.invoices.detail.timeline.pending,
+      description: t.invoices.detail.timeline.pendingDesc,
       date: issueDate,
       tone: "muted",
       icon: <CheckCircle2 className="size-3.5" />,
@@ -141,15 +137,29 @@ function buildTimeline(
 }
 
 export function InvoiceDetail({ id }: { id: string }) {
+  const t = useT();
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
+
   const invoice = invoices.find((i) => i.id === id);
   if (!invoice) notFound();
 
+  const statusLabel: Record<InvoiceStatus, string> = {
+    paid: t.invoices.status.paid,
+    sent: t.invoices.status.sent,
+    draft: t.invoices.status.draft,
+    overdue: t.invoices.status.overdue,
+    void: t.invoices.status.void,
+  };
+
   const customer = customers.find((c) => c.id === invoice.customerId);
   const timeline = buildTimeline(
+    t,
     invoice.status,
     invoice.issueDate,
     invoice.dueDate,
-    invoice.paidAt
+    invoice.paidAt,
+    localeTag
   );
 
   const canMarkPaid =
@@ -166,14 +176,15 @@ export function InvoiceDetail({ id }: { id: string }) {
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--color-muted-foreground)] transition-colors hover:text-[color:var(--color-foreground)]"
       >
         <ArrowLeft className="size-4" />
-        Back to invoices
+        {t.invoices.detail.back}
       </Link>
 
       <PageHeader
-        eyebrow={`Invoice · ${statusLabel[invoice.status]}`}
+        eyebrow={`${t.invoices.detail.eyebrow} · ${statusLabel[invoice.status]}`}
         title={invoice.number}
-        description={`Issued ${formatDate(invoice.issueDate)} · Due ${formatDate(
-          invoice.dueDate
+        description={`${t.invoices.detail.issuedPrefix} ${formatDate(invoice.issueDate, localeTag)} ${t.invoices.detail.dueSeparator} ${formatDate(
+          invoice.dueDate,
+          localeTag
         )}`}
         actions={
           <>
@@ -181,38 +192,38 @@ export function InvoiceDetail({ id }: { id: string }) {
               variant="outline"
               size="sm"
               onClick={() =>
-                toast.success("Sending to printer", {
-                  description: `${invoice.number} is queued for print.`,
+                toast.success(t.invoices.toasts.printing, {
+                  description: `${invoice.number} ${t.invoices.toasts.printingDescSuffix}`,
                 })
               }
             >
               <Printer />
-              Print
+              {t.invoices.detail.print}
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() =>
-                toast.success("Download started", {
-                  description: `${invoice.number}.pdf is being generated…`,
+                toast.success(t.invoices.toasts.downloadStarted, {
+                  description: `${invoice.number}${t.invoices.toasts.downloadStartedDescSuffix}`,
                 })
               }
             >
               <Download />
-              Download PDF
+              {t.invoices.detail.download}
             </Button>
             {canMarkPaid && (
               <Button
                 variant="primary"
                 size="sm"
                 onClick={() =>
-                  toast.success("Marked as paid", {
-                    description: `${invoice.number} reconciled.`,
+                  toast.success(t.invoices.toasts.paid, {
+                    description: `${invoice.number} ${t.invoices.toasts.paidDescSuffix}`,
                   })
                 }
               >
                 <BadgeCheck />
-                Mark as paid
+                {t.invoices.detail.markPaid}
               </Button>
             )}
           </>
@@ -228,14 +239,14 @@ export function InvoiceDetail({ id }: { id: string }) {
               <div>
                 <Logo iconOnly={false} />
                 <div className="mt-3 max-w-xs text-[11.5px] leading-relaxed text-[color:var(--color-muted-foreground)]">
-                  AgroDash Inc. · 42 Harvest Lane, Dakar
+                  {t.invoices.detail.billFromLine1}
                   <br />
-                  invoice@agrodash.io · +221 33 820 0042
+                  {t.invoices.detail.billFromLine2}
                 </div>
               </div>
               <div className="text-left sm:text-right">
                 <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
-                  Invoice
+                  {t.invoices.detail.invoiceLabel}
                 </div>
                 <div className="mt-1 font-mono text-[15px] font-semibold">
                   {invoice.number}
@@ -252,7 +263,7 @@ export function InvoiceDetail({ id }: { id: string }) {
             <CardContent className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 sm:p-8">
               <div className="rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-5">
                 <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
-                  Bill to
+                  {t.invoices.detail.billTo}
                 </div>
                 <div className="mt-2 text-sm font-semibold">
                   {invoice.customerName}
@@ -267,27 +278,27 @@ export function InvoiceDetail({ id }: { id: string }) {
               <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-1 sm:gap-2">
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
-                    Issue date
+                    {t.invoices.detail.issueDate}
                   </div>
                   <div className="mt-1 font-medium">
-                    {formatDate(invoice.issueDate)}
+                    {formatDate(invoice.issueDate, localeTag)}
                   </div>
                 </div>
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
-                    Due date
+                    {t.invoices.detail.dueDate}
                   </div>
                   <div className="mt-1 font-medium">
-                    {formatDate(invoice.dueDate)}
+                    {formatDate(invoice.dueDate, localeTag)}
                   </div>
                 </div>
                 {invoice.paidAt && (
                   <div className="col-span-2 sm:col-span-1">
                     <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
-                      Paid on
+                      {t.invoices.detail.paidOn}
                     </div>
                     <div className="mt-1 font-medium text-[color:var(--color-success)]">
-                      {formatDate(invoice.paidAt)}
+                      {formatDate(invoice.paidAt, localeTag)}
                     </div>
                   </div>
                 )}
@@ -297,10 +308,16 @@ export function InvoiceDetail({ id }: { id: string }) {
             {/* Line items */}
             <div className="border-t border-[color:var(--color-border)]">
               <div className="hidden grid-cols-12 px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-muted-foreground)] sm:grid sm:px-8">
-                <div className="col-span-6">Item</div>
-                <div className="col-span-2 text-right">Qty</div>
-                <div className="col-span-2 text-right">Unit price</div>
-                <div className="col-span-2 text-right">Total</div>
+                <div className="col-span-6">{t.invoices.detail.item}</div>
+                <div className="col-span-2 text-right">
+                  {t.invoices.detail.qty}
+                </div>
+                <div className="col-span-2 text-right">
+                  {t.invoices.detail.unitPrice}
+                </div>
+                <div className="col-span-2 text-right">
+                  {t.invoices.detail.lineTotal}
+                </div>
               </div>
               <div className="divide-y divide-[color:var(--color-border)]">
                 {invoice.items.map((it) => (
@@ -338,19 +355,21 @@ export function InvoiceDetail({ id }: { id: string }) {
               <div className="border-t border-[color:var(--color-border)] bg-[color:var(--color-muted)]/20 px-5 py-5 sm:px-8">
                 <div className="ml-auto w-full max-w-sm space-y-1.5 text-sm">
                   <div className="flex justify-between text-[color:var(--color-muted-foreground)]">
-                    <span>Subtotal</span>
+                    <span>{t.invoices.detail.subtotal}</span>
                     <span className="font-mono tabular-nums">
                       {formatCurrency(invoice.subtotal, invoice.currency)}
                     </span>
                   </div>
                   <div className="flex justify-between text-[color:var(--color-muted-foreground)]">
-                    <span>Tax (7.5%)</span>
+                    <span>{t.invoices.detail.tax}</span>
                     <span className="font-mono tabular-nums">
                       {formatCurrency(invoice.tax, invoice.currency)}
                     </span>
                   </div>
                   <div className="flex items-baseline justify-between border-t border-[color:var(--color-border)] pt-2">
-                    <span className="text-sm font-semibold">Total due</span>
+                    <span className="text-sm font-semibold">
+                      {t.invoices.detail.totalDue}
+                    </span>
                     <span className="font-mono text-lg font-semibold tabular-nums">
                       {formatCurrency(invoice.total, invoice.currency)}
                     </span>
@@ -363,7 +382,7 @@ export function InvoiceDetail({ id }: { id: string }) {
           {invoice.notes && (
             <Card>
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>{t.invoices.detail.notesTitle}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm leading-relaxed text-[color:var(--color-muted-foreground)]">
                 {invoice.notes}
@@ -379,13 +398,13 @@ export function InvoiceDetail({ id }: { id: string }) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BadgeCheck className="size-4 text-[color:var(--color-muted-foreground)]" />
-                Status
+                {t.invoices.detail.statusTitle}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[color:var(--color-muted-foreground)]">
-                  Current
+                  {t.invoices.detail.statusCurrent}
                 </span>
                 <Badge variant={statusVariant[invoice.status]}>
                   {statusLabel[invoice.status]}
@@ -394,25 +413,25 @@ export function InvoiceDetail({ id }: { id: string }) {
               {invoice.paidAt ? (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[color:var(--color-muted-foreground)]">
-                    Paid on
+                    {t.invoices.detail.paidOn}
                   </span>
                   <span className="text-sm font-medium">
-                    {formatDate(invoice.paidAt)}
+                    {formatDate(invoice.paidAt, localeTag)}
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[color:var(--color-muted-foreground)]">
-                    Due on
+                    {t.invoices.detail.statusDueOn}
                   </span>
                   <span className="text-sm font-medium">
-                    {formatDate(invoice.dueDate)}
+                    {formatDate(invoice.dueDate, localeTag)}
                   </span>
                 </div>
               )}
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[color:var(--color-muted-foreground)]">
-                  Amount
+                  {t.invoices.detail.statusAmount}
                 </span>
                 <span className="font-mono text-sm font-semibold tabular-nums">
                   {formatCurrency(invoice.total, invoice.currency)}
@@ -426,7 +445,7 @@ export function InvoiceDetail({ id }: { id: string }) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="size-4 text-[color:var(--color-muted-foreground)]" />
-                Customer
+                {t.invoices.detail.customerTitle}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -459,7 +478,7 @@ export function InvoiceDetail({ id }: { id: string }) {
                 href={`/customers/${invoice.customerId}`}
                 className="inline-flex text-xs font-medium text-[color:var(--color-primary)] hover:underline"
               >
-                View customer profile →
+                {t.invoices.detail.customerView}
               </Link>
             </CardContent>
           </Card>
@@ -469,19 +488,21 @@ export function InvoiceDetail({ id }: { id: string }) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="size-4 text-[color:var(--color-muted-foreground)]" />
-                Payment details
+                {t.invoices.detail.payment.title}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-[color:var(--color-muted-foreground)]">
-                  Method
+                  {t.invoices.detail.payment.method}
                 </span>
-                <span className="font-medium">Mobile Money · Wave</span>
+                <span className="font-medium">
+                  {t.invoices.detail.payment.methodValue}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[color:var(--color-muted-foreground)]">
-                  Reference
+                  {t.invoices.detail.payment.reference}
                 </span>
                 <span className="font-mono text-xs">
                   WAV-{invoice.id.toUpperCase().replace("INV_", "")}-
@@ -491,19 +512,19 @@ export function InvoiceDetail({ id }: { id: string }) {
               {invoice.paidAt ? (
                 <div className="flex items-center justify-between">
                   <span className="text-[color:var(--color-muted-foreground)]">
-                    Settled
+                    {t.invoices.detail.payment.settled}
                   </span>
                   <span className="text-xs text-[color:var(--color-success)]">
-                    {formatDateTime(invoice.paidAt)}
+                    {formatDateTime(invoice.paidAt, localeTag)}
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
                   <span className="text-[color:var(--color-muted-foreground)]">
-                    Settled
+                    {t.invoices.detail.payment.settled}
                   </span>
                   <span className="text-xs text-[color:var(--color-muted-foreground)]">
-                    Not yet
+                    {t.invoices.detail.payment.notYet}
                   </span>
                 </div>
               )}
@@ -513,7 +534,7 @@ export function InvoiceDetail({ id }: { id: string }) {
           {/* Timeline */}
           <Card>
             <CardHeader>
-              <CardTitle>Activity</CardTitle>
+              <CardTitle>{t.invoices.detail.timeline.title}</CardTitle>
             </CardHeader>
             <CardContent className="pl-6">
               <ol className="relative space-y-4 border-l border-[color:var(--color-border)] pl-5">
@@ -538,7 +559,7 @@ export function InvoiceDetail({ id }: { id: string }) {
                       </div>
                     )}
                     <div className="mt-0.5 text-[11px] text-[color:var(--color-muted-foreground)]">
-                      {formatDate(event.date)}
+                      {formatDate(event.date, localeTag)}
                     </div>
                   </li>
                 ))}

@@ -7,8 +7,9 @@ import { Dialog, DialogBody, DialogContent, DialogFooter } from "@/components/ui
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import type { CalendarEvent } from "@/lib/calendar-mock";
-import { eventKindColor, eventKindLabel } from "@/lib/calendar-mock";
+import { useLanguage, useT } from "@/components/providers/language-provider";
+import type { CalendarEvent, CalendarEventKind } from "@/lib/calendar-mock";
+import { eventKindColor } from "@/lib/calendar-mock";
 import { formatDayLong, formatEventTimeRange } from "./date-utils";
 
 interface EventDialogProps {
@@ -18,6 +19,20 @@ interface EventDialogProps {
 }
 
 export function EventDialog({ event, open, onOpenChange }: EventDialogProps) {
+  const t = useT();
+  const { locale } = useLanguage();
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
+
+  const kindLabel: Record<CalendarEventKind, string> = {
+    harvest: t.calendar.kinds.harvest,
+    planting: t.calendar.kinds.planting,
+    delivery: t.calendar.kinds.delivery,
+    meeting: t.calendar.kinds.meeting,
+    inspection: t.calendar.kinds.inspection,
+    payment: t.calendar.kinds.payment,
+    training: t.calendar.kinds.training,
+  };
+
   if (!event) {
     // Dialog requires children, but when there is no event we also keep it closed,
     // so nothing ever renders. Render an empty fragment to satisfy the contract.
@@ -33,15 +48,17 @@ export function EventDialog({ event, open, onOpenChange }: EventDialogProps) {
   const color = event.color ?? eventKindColor[event.kind];
 
   function handleEdit() {
-    toast("Editing is a demo stub", {
-      description: "Wire this up to your backend.",
+    toast(t.calendar.event.editStubTitle, {
+      description: t.calendar.event.editStubDesc,
     });
     onOpenChange(false);
   }
 
   function handleDelete() {
-    toast.success("Event deleted", {
-      description: event ? `“${event.title}” has been removed.` : undefined,
+    toast.success(t.calendar.toasts.deleted, {
+      description: event
+        ? `${t.calendar.toasts.deletedDescPrefix}${event.title}${t.calendar.toasts.deletedDescSuffix}`
+        : undefined,
     });
     onOpenChange(false);
   }
@@ -71,7 +88,7 @@ export function EventDialog({ event, open, onOpenChange }: EventDialogProps) {
                 className="size-1.5 rounded-full"
                 style={{ backgroundColor: color }}
               />
-              {eventKindLabel[event.kind]}
+              {kindLabel[event.kind]}
             </Badge>
           </div>
           <h2 className="mt-2 text-base font-semibold leading-tight sm:text-lg">
@@ -88,11 +105,16 @@ export function EventDialog({ event, open, onOpenChange }: EventDialogProps) {
 
           <div className="space-y-2.5 rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-3 text-sm">
             <DetailRow icon={<CalendarDays className="size-4" />}>
-              <span className="font-medium">{formatDayLong(start)}</span>
+              <span className="font-medium">
+                {formatDayLong(start, localeTag)}
+              </span>
             </DetailRow>
             <DetailRow icon={<Clock className="size-4" />}>
               <span className="tabular-nums">
-                {formatEventTimeRange(start, end, event.allDay)}
+                {formatEventTimeRange(start, end, event.allDay, {
+                  locale: localeTag,
+                  allDayLabel: t.calendar.allDay,
+                })}
               </span>
             </DetailRow>
             {event.location && (
@@ -106,7 +128,7 @@ export function EventDialog({ event, open, onOpenChange }: EventDialogProps) {
             <div>
               <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)]">
                 <Users className="size-3.5" />
-                Attendees · {event.attendees.length}
+                {t.calendar.event.attendees} · {event.attendees.length}
               </div>
               <ul className="space-y-2">
                 {event.attendees.map((a) => (
@@ -132,10 +154,10 @@ export function EventDialog({ event, open, onOpenChange }: EventDialogProps) {
 
         <DialogFooter>
           <Button variant="destructive" size="sm" onClick={handleDelete}>
-            Delete
+            {t.calendar.event.delete}
           </Button>
           <Button variant="outline" size="sm" onClick={handleEdit}>
-            Edit
+            {t.calendar.event.edit}
           </Button>
         </DialogFooter>
       </DialogContent>

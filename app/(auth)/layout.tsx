@@ -1,13 +1,17 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { MarketingPanel } from "@/components/auth/marketing-panel";
+import { useT } from "@/components/providers/language-provider";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const t = useT();
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
@@ -16,7 +20,7 @@ export default function AuthLayout({
           <div className="flex items-center justify-between">
             <Link
               href="/"
-              aria-label="AgroDash home"
+              aria-label={t.auth.layout.homeAriaLabel}
               className="inline-flex rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
             >
               <Logo />
@@ -26,7 +30,7 @@ export default function AuthLayout({
                 href="/"
                 className="rounded-md underline-offset-4 transition-colors hover:text-[color:var(--color-foreground)] hover:underline"
               >
-                Back to site
+                {t.auth.layout.backToSite}
               </Link>
             </div>
           </div>
@@ -42,19 +46,19 @@ export default function AuthLayout({
                 href="/"
                 className="transition-colors hover:text-[color:var(--color-foreground)]"
               >
-                Terms
+                {t.auth.layout.terms}
               </Link>
               <Link
                 href="/"
                 className="transition-colors hover:text-[color:var(--color-foreground)]"
               >
-                Privacy
+                {t.auth.layout.privacy}
               </Link>
               <Link
                 href="/"
                 className="transition-colors hover:text-[color:var(--color-foreground)]"
               >
-                Support
+                {t.auth.layout.support}
               </Link>
             </nav>
           </footer>

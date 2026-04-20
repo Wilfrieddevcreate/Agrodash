@@ -106,7 +106,7 @@ export function Sidebar() {
       </AnimatePresence>
 
       <aside
-        aria-label="Primary"
+        aria-label={t.nav.primary}
         data-collapsed={collapsed ? "true" : "false"}
         className={cn(
           // Positioning & surface
@@ -129,7 +129,7 @@ export function Sidebar() {
 
         {/* Nav */}
         <nav
-          aria-label="Main navigation"
+          aria-label={t.nav.mainNavigation}
           className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-none py-3"
         >
           <NavGroup label={t.nav.main} collapsed={collapsed}>
@@ -176,7 +176,7 @@ export function Sidebar() {
         {/* Mobile close button — floats in the corner */}
         <button
           type="button"
-          aria-label="Close menu"
+          aria-label={t.nav.closeMenu}
           onClick={() => setMobileOpen(false)}
           className="absolute right-3 top-3 inline-flex size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] lg:hidden"
         >
@@ -198,6 +198,7 @@ function SidebarBrand({
   collapsed: boolean;
   onNavigate: () => void;
 }) {
+  const t = useT();
   return (
     <div
       className={cn(
@@ -210,7 +211,7 @@ function SidebarBrand({
       <Link
         href="/"
         onClick={onNavigate}
-        aria-label="AgroDash home"
+        aria-label={t.nav.brandHome}
         className="flex items-center"
       >
         {/* Mobile + desktop expanded → full logo; collapsed → icon-only */}
@@ -359,6 +360,7 @@ function NavLink({
  * ────────────────────────────────────────────────────────── */
 
 function UpgradePromo({ collapsed }: { collapsed: boolean }) {
+  const t = useT();
   return (
     <div className={cn("pb-3", collapsed ? "px-0" : "px-3")}>
       {/* Expanded card — mobile always + desktop expanded */}
@@ -368,12 +370,12 @@ function UpgradePromo({ collapsed }: { collapsed: boolean }) {
           <div className="mb-1.5 inline-flex size-7 items-center justify-center rounded-md bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] shadow-sm">
             <Sparkles className="size-3.5" />
           </div>
-          <h4 className="text-sm font-semibold">Upgrade to Pro</h4>
+          <h4 className="text-sm font-semibold">{t.nav.upgradeTitle}</h4>
           <p className="mt-0.5 text-xs text-[color:var(--color-muted-foreground)]">
-            Unlimited farms, advanced analytics.
+            {t.nav.upgradeDesc}
           </p>
           <button className="mt-3 inline-flex h-8 w-full items-center justify-center rounded-md bg-[color:var(--color-primary)] text-xs font-semibold text-[color:var(--color-primary-foreground)] transition-all hover:brightness-110">
-            Upgrade now
+            {t.nav.upgradeCta}
           </button>
         </div>
       </div>
@@ -381,9 +383,9 @@ function UpgradePromo({ collapsed }: { collapsed: boolean }) {
       {/* Collapsed tile — desktop only */}
       {collapsed && (
         <div className="hidden lg:grid lg:place-items-center">
-          <Tooltip content="Upgrade to Pro" side="right">
+          <Tooltip content={t.nav.upgradeTitle} side="right">
             <button
-              aria-label="Upgrade to Pro"
+              aria-label={t.nav.upgradeTitle}
               className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-[color:var(--color-primary)]/25 to-[color:var(--color-primary)]/10 text-[color:var(--color-primary)] ring-1 ring-inset ring-[color:var(--color-primary)]/30 transition-all hover:brightness-110"
             >
               <Sparkles className="size-[18px]" />
@@ -400,6 +402,7 @@ function UpgradePromo({ collapsed }: { collapsed: boolean }) {
  * ────────────────────────────────────────────────────────── */
 
 function UserChip({ collapsed }: { collapsed: boolean }) {
+  const t = useT();
   return (
     <>
       {/* Expanded → mobile always + desktop expanded */}
@@ -420,7 +423,7 @@ function UserChip({ collapsed }: { collapsed: boolean }) {
         </div>
         <button
           type="button"
-          aria-label="Log out"
+          aria-label={t.nav.logout}
           className="inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)]"
         >
           <LogOut className="size-4" />
@@ -432,7 +435,7 @@ function UserChip({ collapsed }: { collapsed: boolean }) {
         <div className="hidden lg:grid lg:place-items-center lg:py-3">
           <Tooltip content="Alex Diallo · Operations" side="right">
             <button
-              aria-label="Account"
+              aria-label={t.nav.account}
               className="grid size-10 place-items-center rounded-full bg-gradient-to-br from-[color:var(--color-primary)]/25 to-[color:var(--color-accent)]/30 text-[11px] font-semibold text-[color:var(--color-primary)] ring-1 ring-inset ring-[color:var(--color-border)] transition-all hover:brightness-110"
             >
               {initials("Alex Diallo")}
@@ -455,11 +458,12 @@ function CollapseToggle({
   collapsed: boolean;
   onToggle: () => void;
 }) {
+  const t = useT();
   return (
     <button
       type="button"
       onClick={onToggle}
-      aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      aria-label={collapsed ? t.nav.expandSidebar : t.nav.collapseSidebar}
       aria-expanded={!collapsed}
       className={cn(
         // Desktop-only bottom toggle (mobile drawer uses the X in the corner)
@@ -493,7 +497,7 @@ function CollapseToggle({
             >
               <ChevronsLeft className="size-[18px]" />
             </motion.span>
-            <span>Collapse</span>
+            <span>{t.nav.collapse}</span>
           </span>
           <kbd className="rounded border border-[color:var(--color-border)] bg-[color:var(--color-card)] px-1.5 py-0.5 font-mono text-[10px] text-[color:var(--color-muted-foreground)]">
             Ctrl B

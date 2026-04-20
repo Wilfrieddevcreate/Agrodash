@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { useT } from "@/components/providers/language-provider";
+import type { Dictionary } from "@/lib/i18n";
 import { cn, relativeTime } from "@/lib/utils";
 import {
   kanbanColumns,
@@ -32,12 +34,21 @@ import {
   type KanbanPriority,
 } from "@/lib/kanban-mock";
 
-const priorityOptions: Array<{ label: string; value: KanbanPriority }> = [
-  { label: "Low", value: "low" },
-  { label: "Medium", value: "medium" },
-  { label: "High", value: "high" },
-  { label: "Urgent", value: "urgent" },
-];
+const LABEL_KEY_MAP: Record<string, keyof Dictionary["kanban"]["labels"]> = {
+  Harvest: "harvest",
+  Logistics: "logistics",
+  Compliance: "compliance",
+  Contracts: "contracts",
+  Training: "training",
+  "R&D": "rnd",
+};
+
+const COLUMN_KEY_MAP: Record<KanbanColumnId, keyof Dictionary["kanban"]["columns"]> = {
+  backlog: "backlog",
+  in_progress: "in_progress",
+  review: "review",
+  done: "done",
+};
 
 interface TaskDialogProps {
   open: boolean;
@@ -85,6 +96,24 @@ export function TaskDialog({
   onCreate,
   onDelete,
 }: TaskDialogProps) {
+  const t = useT();
+
+  const priorityOptions: Array<{ label: string; value: KanbanPriority }> = [
+    { label: t.kanban.priority.low, value: "low" },
+    { label: t.kanban.priority.medium, value: "medium" },
+    { label: t.kanban.priority.high, value: "high" },
+    { label: t.kanban.priority.urgent, value: "urgent" },
+  ];
+
+  function localizeColumnTitle(id: KanbanColumnId): string {
+    return t.kanban.columns[COLUMN_KEY_MAP[id]];
+  }
+
+  function localizeLabel(name: string): string {
+    const key = LABEL_KEY_MAP[name];
+    return key ? t.kanban.labels[key] : name;
+  }
+
   const [draft, setDraft] = React.useState<KanbanCard>(() =>
     card ?? emptyDraft(defaultColumnId, NOW_ISO)
   );
@@ -154,7 +183,7 @@ export function TaskDialog({
 
   function handleSave() {
     if (!draft.title.trim()) {
-      toast.error("Title is required");
+      toast.error(t.kanban.toasts.titleRequired);
       return;
     }
 
@@ -173,17 +202,17 @@ export function TaskDialog({
         subtasks,
       };
       onCreate?.(created);
-      toast.success("Task created", { description: created.title });
+      toast.success(t.kanban.toasts.created, { description: created.title });
     } else {
       const saved: KanbanCard = { ...draft, subtasks };
       onSave(saved);
-      toast.success("Changes saved");
+      toast.success(t.kanban.toasts.updated);
     }
     onOpenChange(false);
   }
 
   const columnOptions = kanbanColumns.map((c) => ({
-    label: c.title,
+    label: localizeColumnTitle(c.id),
     value: c.id,
   }));
 
@@ -191,11 +220,11 @@ export function TaskDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         widthClass="max-w-3xl"
-        title={mode === "create" ? "New task" : "Task details"}
+        title={mode === "create" ? t.kanban.dialog.addTitle : t.kanban.dialog.editTitle}
         description={
           mode === "create"
-            ? "Capture the task, assign owners, and drop it into a column."
-            : "Update status, owners and details. Changes save optimistically."
+            ? t.kanban.dialog.addDescription
+            : t.kanban.dialog.editDescription
         }
       >
         <DialogBody className="p-0">
@@ -203,23 +232,25 @@ export function TaskDialog({
             {/* ───────── Main column ───────── */}
             <div className="flex flex-col gap-5 px-5 py-5 sm:px-6">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="task-title">Title</Label>
+                <Label htmlFor="task-title">{t.kanban.dialog.titleLabel}</Label>
                 <Input
                   id="task-title"
                   value={draft.title}
                   onChange={(e) => updateDraft("title", e.target.value)}
-                  placeholder="e.g. Inspect Cassava lot CS-22 before shipment"
+                  placeholder={t.kanban.dialog.titlePlaceholder}
                   className="text-base font-semibold"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="task-desc">Description</Label>
+                <Label htmlFor="task-desc">
+                  {t.kanban.dialog.descriptionLabel}
+                </Label>
                 <Textarea
                   id="task-desc"
                   value={draft.description ?? ""}
                   onChange={(e) => updateDraft("description", e.target.value)}
-                  placeholder="Add context, links, or acceptance criteria..."
+                  placeholder={t.kanban.dialog.descriptionPlaceholder}
                   className="min-h-[120px]"
                 />
               </div>
@@ -227,17 +258,18 @@ export function TaskDialog({
               {/* Subtasks */}
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center justify-between">
-                  <Label>Subtasks</Label>
+                  <Label>{t.kanban.dialog.subtasksLabel}</Label>
                   <span className="text-[11px] font-medium text-[color:var(--color-muted-foreground)]">
                     {subtaskItems.filter((s) => s.done).length}/
-                    {subtaskItems.length || 0} complete
+                    {subtaskItems.length || 0}{" "}
+                    {t.kanban.dialog.subtasksCompleteSuffix}
                   </span>
                 </div>
 
                 <div className="rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-2">
                   {subtaskItems.length === 0 ? (
                     <p className="px-2 py-3 text-xs text-[color:var(--color-muted-foreground)]">
-                      No subtasks yet. Break the work down below.
+                      {t.kanban.dialog.subtasksEmpty}
                     </p>
                   ) : (
                     <ul className="flex flex-col divide-y divide-[color:var(--color-border)]">
@@ -250,7 +282,9 @@ export function TaskDialog({
                             type="button"
                             onClick={() => toggleSubtask(st.id)}
                             aria-label={
-                              st.done ? "Mark as incomplete" : "Mark as complete"
+                              st.done
+                                ? t.kanban.dialog.markIncomplete
+                                : t.kanban.dialog.markComplete
                             }
                             className={cn(
                               "inline-flex size-5 shrink-0 items-center justify-center rounded-md border transition-colors",
@@ -273,7 +307,7 @@ export function TaskDialog({
                           <button
                             type="button"
                             onClick={() => removeSubtask(st.id)}
-                            aria-label="Remove subtask"
+                            aria-label={t.kanban.dialog.removeSubtask}
                             className="rounded-md p-1 text-[color:var(--color-muted-foreground)] opacity-0 transition-all hover:bg-[color:var(--color-muted)] group-hover:opacity-100"
                           >
                             <Trash2 className="size-3.5" />
@@ -293,7 +327,7 @@ export function TaskDialog({
                           addSubtask();
                         }
                       }}
-                      placeholder="Add a subtask..."
+                      placeholder={t.kanban.dialog.subtasksPlaceholder}
                       className="h-9"
                     />
                     <Button
@@ -303,7 +337,7 @@ export function TaskDialog({
                       onClick={addSubtask}
                       disabled={!newSubtask.trim()}
                     >
-                      <Plus className="size-4" /> Add
+                      <Plus className="size-4" /> {t.kanban.dialog.addSubtask}
                     </Button>
                   </div>
                 </div>
@@ -312,16 +346,13 @@ export function TaskDialog({
               {/* Activity (demo) */}
               {mode === "edit" && (
                 <div className="flex flex-col gap-2">
-                  <Label>Activity</Label>
+                  <Label>{t.kanban.dialog.activityLabel}</Label>
                   <ul className="flex flex-col gap-3 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/20 p-3.5">
                     <ActivityRow
                       icon={<CircleCheck className="size-3.5" />}
                       actor="Alex Diallo"
                       action="moved this task to"
-                      target={
-                        kanbanColumns.find((c) => c.id === draft.columnId)
-                          ?.title ?? "Backlog"
-                      }
+                      target={localizeColumnTitle(draft.columnId)}
                       when={draft.createdAt}
                     />
                     <ActivityRow
@@ -345,7 +376,7 @@ export function TaskDialog({
 
             {/* ───────── Right rail ───────── */}
             <aside className="flex flex-col gap-4 border-t border-[color:var(--color-border)] bg-[color:var(--color-muted)]/20 px-5 py-5 md:border-l md:border-t-0 md:px-5">
-              <SidebarField label="Status">
+              <SidebarField label={t.kanban.dialog.statusLabel}>
                 <Select
                   value={draft.columnId}
                   onValueChange={(v) =>
@@ -355,7 +386,7 @@ export function TaskDialog({
                 />
               </SidebarField>
 
-              <SidebarField label="Priority">
+              <SidebarField label={t.kanban.dialog.priorityLabel}>
                 <Select
                   value={draft.priority}
                   onValueChange={(v) =>
@@ -365,7 +396,7 @@ export function TaskDialog({
                 />
               </SidebarField>
 
-              <SidebarField label="Due date">
+              <SidebarField label={t.kanban.dialog.dueDateLabel}>
                 <Input
                   type="date"
                   value={toDateInputValue(draft.dueDate)}
@@ -380,7 +411,7 @@ export function TaskDialog({
                 />
               </SidebarField>
 
-              <SidebarField label="Labels">
+              <SidebarField label={t.kanban.dialog.labelsLabel}>
                 <div className="flex flex-wrap gap-1.5">
                   {kanbanLabels.map((label) => {
                     const active = draft.labels.includes(label.id);
@@ -408,19 +439,19 @@ export function TaskDialog({
                           className="size-1.5 rounded-full"
                           style={{ backgroundColor: label.color }}
                         />
-                        {label.name}
+                        {localizeLabel(label.name)}
                       </button>
                     );
                   })}
                 </div>
               </SidebarField>
 
-              <SidebarField label="Assignees">
+              <SidebarField label={t.kanban.dialog.assigneesLabel}>
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     {draft.assignees.length === 0 ? (
                       <span className="text-xs text-[color:var(--color-muted-foreground)]">
-                        No one assigned yet.
+                        {t.kanban.dialog.assigneesEmpty}
                       </span>
                     ) : (
                       draft.assignees.map((a) => (
@@ -437,7 +468,7 @@ export function TaskDialog({
                   <details className="group rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-card)] open:shadow-elev-xs">
                     <summary className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] font-medium text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-foreground)]">
                       <UserPlus className="size-3.5" />
-                      Manage assignees
+                      {t.kanban.dialog.manageAssignees}
                     </summary>
                     <ul className="max-h-48 overflow-y-auto border-t border-[color:var(--color-border)] p-1">
                       {assigneePool.map((a) => {
@@ -468,10 +499,12 @@ export function TaskDialog({
                 </div>
               </SidebarField>
 
-              <SidebarField label="Attachments">
+              <SidebarField label={t.kanban.dialog.attachmentsLabel}>
                 <div className="flex items-center gap-2 rounded-lg border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-card)] px-3 py-4 text-[11px] text-[color:var(--color-muted-foreground)]">
                   <ClipboardList className="size-4" />
-                  <span className="flex-1">Drop files or click to upload</span>
+                  <span className="flex-1">
+                    {t.kanban.dialog.attachmentsDropzone}
+                  </span>
                 </div>
               </SidebarField>
             </aside>
@@ -486,11 +519,11 @@ export function TaskDialog({
               className="mr-auto text-[color:var(--color-destructive)] hover:bg-[color:var(--color-destructive)]/10"
               onClick={() => {
                 onDelete(draft.id);
-                toast.success("Task deleted");
+                toast.success(t.kanban.toasts.deleted);
                 onOpenChange(false);
               }}
             >
-              <Trash2 /> Delete
+              <Trash2 /> {t.kanban.dialog.delete}
             </Button>
           )}
           <Button
@@ -499,10 +532,12 @@ export function TaskDialog({
             size="sm"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t.kanban.dialog.cancel}
           </Button>
           <Button type="button" variant="primary" size="sm" onClick={handleSave}>
-            {mode === "create" ? "Create task" : "Save changes"}
+            {mode === "create"
+              ? t.kanban.dialog.create
+              : t.kanban.dialog.save}
           </Button>
         </DialogFooter>
       </DialogContent>

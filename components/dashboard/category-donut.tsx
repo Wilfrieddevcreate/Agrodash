@@ -45,13 +45,13 @@ export function CategoryDonut() {
                 boxShadow:
                   "0 10px 32px -12px oklch(0.2 0.02 155 / 0.18), 0 4px 8px -4px oklch(0.2 0.02 155 / 0.08)",
               }}
-              formatter={(value) => [`${Number(value)}%`, "Share"]}
+              formatter={(value) => [`${Number(value)}%`, t.dashboard.charts.shareLabel]}
             />
           </PieChart>
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-[11px] font-medium uppercase tracking-wider text-[color:var(--color-muted-foreground)]">
-            Total
+            {t.dashboard.charts.totalLabel}
           </span>
           <span className="font-mono text-lg font-semibold tabular-nums">
             {total}%

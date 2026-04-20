@@ -39,7 +39,7 @@ export function SettingsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Workspace"
+        eyebrow={t.settings.eyebrow}
         title={t.settings.title}
         description={t.settings.subtitle}
       />
@@ -245,7 +245,7 @@ export function SettingsPage() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-primary)]">
-                      Current plan
+                      {t.settings.billing.currentPlan}
                     </div>
                     <div className="mt-1 text-xl font-semibold">
                       {t.settings.billing.plan}

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { FieldHint, Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { useT } from "@/components/providers/language-provider";
 import { customers, products } from "@/lib/mock-data";
 import { invoices as seedInvoices } from "@/lib/invoices-mock";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -60,6 +61,7 @@ function nextInvoiceNumber() {
 }
 
 export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
+  const t = useT();
   const [customerId, setCustomerId] = React.useState("");
   const [issueDate, setIssueDate] = React.useState(toDateInput(NOW));
   const [dueDate, setDueDate] = React.useState(
@@ -85,21 +87,21 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
 
   const customerOptions = React.useMemo(
     () => [
-      { label: "Select a customer…", value: "" },
+      { label: t.invoices.form.customerPlaceholder, value: "" },
       ...customers.map((c) => ({ label: c.name, value: c.id })),
     ],
-    []
+    [t.invoices.form.customerPlaceholder]
   );
 
   const productOptions = React.useMemo(
     () => [
-      { label: "Select a product…", value: "" },
+      { label: t.invoices.form.productPlaceholder, value: "" },
       ...products.map((p) => ({
         label: `${p.name} · ${formatCurrency(p.price)}/${p.unit}`,
         value: p.id,
       })),
     ],
-    []
+    [t.invoices.form.productPlaceholder]
   );
 
   function updateLine(key: string, patch: Partial<LineDraft>) {
@@ -140,35 +142,37 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
     e.preventDefault();
     if (!isValid) return;
     const number = nextInvoiceNumber();
-    toast.success("Invoice created", {
-      description: `${number} saved as draft`,
+    toast.success(t.invoices.toasts.created, {
+      description: `${number} ${t.invoices.toasts.createdDescSuffix}`,
     });
     onOpenChange(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent title="New invoice" description="Create a draft invoice for a customer." widthClass="max-w-2xl">
+      <DialogContent
+        title={t.invoices.form.addTitle}
+        description={t.invoices.form.addDescription}
+        widthClass="max-w-2xl"
+      >
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
           <DialogBody className="space-y-5">
             {/* Customer */}
             <div className="space-y-1.5">
-              <Label htmlFor="inv-customer">Customer</Label>
+              <Label htmlFor="inv-customer">{t.invoices.form.customer}</Label>
               <Select
                 value={customerId}
                 onValueChange={setCustomerId}
                 options={customerOptions}
-                placeholder="Select a customer…"
+                placeholder={t.invoices.form.customerPlaceholder}
               />
-              <FieldHint>
-                The invoice will be addressed to this customer&apos;s billing details.
-              </FieldHint>
+              <FieldHint>{t.invoices.form.customerHint}</FieldHint>
             </div>
 
             {/* Dates */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="inv-issue">Issue date</Label>
+                <Label htmlFor="inv-issue">{t.invoices.form.issueDate}</Label>
                 <Input
                   id="inv-issue"
                   type="date"
@@ -177,7 +181,7 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="inv-due">Due date</Label>
+                <Label htmlFor="inv-due">{t.invoices.form.dueDate}</Label>
                 <Input
                   id="inv-due"
                   type="date"
@@ -190,14 +194,14 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
             {/* Line items */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>Line items</Label>
+                <Label>{t.invoices.form.items}</Label>
                 <Button
                   type="button"
                   size="xs"
                   variant="outline"
                   onClick={addLine}
                 >
-                  <Plus /> Add item
+                  <Plus /> {t.invoices.form.addItem}
                 </Button>
               </div>
               <div className="space-y-2">
@@ -216,7 +220,7 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
                           value={line.productId}
                           onValueChange={(v) => onProductChange(line.key, v)}
                           options={productOptions}
-                          placeholder="Select a product…"
+                          placeholder={t.invoices.form.productPlaceholder}
                         />
                       </div>
                       <div className="col-span-4 sm:col-span-2">
@@ -230,8 +234,8 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
                               qty: Math.max(0, Number(e.target.value) || 0),
                             })
                           }
-                          placeholder="Qty"
-                          aria-label="Quantity"
+                          placeholder={t.invoices.form.qty}
+                          aria-label={t.invoices.form.qtyAria}
                         />
                       </div>
                       <div className="col-span-4 sm:col-span-2">
@@ -248,8 +252,8 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
                               ),
                             })
                           }
-                          placeholder="Unit price"
-                          aria-label="Unit price"
+                          placeholder={t.invoices.form.unitPrice}
+                          aria-label={t.invoices.form.unitPriceAria}
                         />
                       </div>
                       <div className="col-span-3 flex items-center justify-end px-2 font-mono text-sm font-semibold tabular-nums sm:col-span-2">
@@ -258,7 +262,7 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
                       <div className="col-span-1 flex items-center justify-end">
                         <button
                           type="button"
-                          aria-label="Remove line"
+                          aria-label={t.invoices.form.removeItem}
                           disabled={lines.length <= 1}
                           onClick={() => removeLine(line.key)}
                           className="inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-destructive)]/10 hover:text-[color:var(--color-destructive)] disabled:pointer-events-none disabled:opacity-40"
@@ -276,19 +280,19 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
             <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 px-4 py-3">
               <div className="ml-auto w-full max-w-xs space-y-1 text-sm">
                 <div className="flex justify-between text-[color:var(--color-muted-foreground)]">
-                  <span>Subtotal</span>
+                  <span>{t.invoices.form.subtotal}</span>
                   <span className="font-mono tabular-nums">
                     {formatCurrency(subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between text-[color:var(--color-muted-foreground)]">
-                  <span>Tax (7.5%)</span>
+                  <span>{t.invoices.form.tax}</span>
                   <span className="font-mono tabular-nums">
                     {formatCurrency(tax)}
                   </span>
                 </div>
                 <div className="flex justify-between border-t border-[color:var(--color-border)] pt-1.5 text-sm font-semibold">
-                  <span>Total</span>
+                  <span>{t.invoices.form.total}</span>
                   <span className="font-mono tabular-nums">
                     {formatCurrency(total)}
                   </span>
@@ -298,12 +302,12 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
 
             {/* Notes */}
             <div className="space-y-1.5">
-              <Label htmlFor="inv-notes">Notes</Label>
+              <Label htmlFor="inv-notes">{t.invoices.form.notes}</Label>
               <Textarea
                 id="inv-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Optional — payment instructions, internal reference, etc."
+                placeholder={t.invoices.form.notesPlaceholder}
               />
             </div>
           </DialogBody>
@@ -314,7 +318,7 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
               size="sm"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {t.invoices.form.cancel}
             </Button>
             <Button
               type="submit"
@@ -322,7 +326,7 @@ export function InvoiceForm({ open, onOpenChange }: InvoiceFormProps) {
               size="sm"
               disabled={!isValid}
             >
-              Create invoice
+              {t.invoices.form.save}
             </Button>
           </DialogFooter>
         </form>

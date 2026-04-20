@@ -64,7 +64,7 @@ export function OrderDetail({ id }: { id: string }) {
         {t.orders.detail.back}
       </Link>
       <PageHeader
-        eyebrow={`Order · ${t.orders.status[order.status]}`}
+        eyebrow={`${t.orders.detail.eyebrowPrefix} · ${t.orders.status[order.status]}`}
         title={order.reference}
         description={`${t.orders.detail.summary} · ${formatDateTime(order.placedAt)}`}
         actions={
@@ -75,17 +75,17 @@ export function OrderDetail({ id }: { id: string }) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast.success("Invoice sent to printer")}
+              onClick={() => toast.success(t.orders.detail.toast.printed)}
             >
               <Printer />
-              Print
+              {t.orders.detail.print}
             </Button>
             {order.status !== "delivered" && order.status !== "cancelled" && (
               <Button
                 size="sm"
                 onClick={() =>
-                  toast.success("Status updated", {
-                    description: "Moved to the next stage.",
+                  toast.success(t.orders.detail.toast.statusUpdated, {
+                    description: t.orders.detail.toast.statusUpdatedDesc,
                   })
                 }
               >
@@ -240,7 +240,7 @@ export function OrderDetail({ id }: { id: string }) {
                   href={`/customers/${order.customerId}`}
                   className="mt-1 inline-flex text-xs font-medium text-[color:var(--color-primary)] hover:underline"
                 >
-                  View profile →
+                  {t.orders.detail.viewProfile}
                 </Link>
               </div>
             </CardContent>
@@ -274,15 +274,15 @@ export function OrderDetail({ id }: { id: string }) {
             <CardContent className="text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-[color:var(--color-muted-foreground)]">
-                  Method
+                  {t.orders.detail.paymentMethod}
                 </span>
                 <span className="font-medium">{order.paymentMethod}</span>
               </div>
               <div className="mt-1.5 flex items-center justify-between">
                 <span className="text-[color:var(--color-muted-foreground)]">
-                  Status
+                  {t.orders.detail.paymentStatus}
                 </span>
-                <Badge variant="success">Paid</Badge>
+                <Badge variant="success">{t.orders.detail.paymentPaid}</Badge>
               </div>
             </CardContent>
           </Card>

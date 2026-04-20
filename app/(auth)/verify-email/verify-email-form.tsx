@@ -6,12 +6,14 @@ import { toast } from "sonner";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthCard } from "@/components/auth/auth-card";
+import { useT } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 
 const CODE_LENGTH = 6;
 const DEMO_EMAIL = "alex@agrodash.io";
 
 export function VerifyEmailForm() {
+  const t = useT();
   const [digits, setDigits] = React.useState<string[]>(() =>
     Array.from({ length: CODE_LENGTH }, () => "")
   );
@@ -103,18 +105,18 @@ export function VerifyEmailForm() {
     e.preventDefault();
     if (!isComplete) return;
     setSubmitting(true);
-    toast.success("Email verified", {
-      description: "Your workspace is ready.",
+    toast.success(t.auth.verify.toastSuccess, {
+      description: t.auth.verify.toastSuccessDesc,
     });
     window.setTimeout(() => setSubmitting(false), 900);
   }
 
   return (
     <AuthCard
-      title="Verify your email"
+      title={t.auth.verify.title}
       description={
         <>
-          Enter the 6-digit code sent to{" "}
+          {t.auth.verify.subtitlePrefix}{" "}
           <span className="font-medium text-[color:var(--color-foreground)]">
             {DEMO_EMAIL}
           </span>
@@ -122,12 +124,12 @@ export function VerifyEmailForm() {
       }
       footer={
         <>
-          Wrong email?{" "}
+          {t.auth.verify.wrongEmail}{" "}
           <Link
             href="/register"
             className="font-semibold text-[color:var(--color-foreground)] underline-offset-4 hover:underline"
           >
-            Change it
+            {t.auth.verify.changeEmail}
           </Link>
         </>
       }
@@ -136,7 +138,7 @@ export function VerifyEmailForm() {
         <div
           className="flex items-center justify-between gap-2 sm:gap-3"
           role="group"
-          aria-label="Verification code"
+          aria-label={t.auth.verify.codeAriaLabel}
         >
           {digits.map((digit, i) => (
             <input
@@ -148,7 +150,7 @@ export function VerifyEmailForm() {
               inputMode="numeric"
               autoComplete={i === 0 ? "one-time-code" : "off"}
               maxLength={1}
-              aria-label={`Digit ${i + 1}`}
+              aria-label={`${t.auth.verify.digitAriaLabel} ${i + 1}`}
               value={digit}
               onChange={(e) => handleChange(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
@@ -173,7 +175,7 @@ export function VerifyEmailForm() {
           className="w-full"
           disabled={!isComplete || submitting}
         >
-          {submitting ? "Verifying..." : "Verify"}
+          {submitting ? t.auth.verify.submitting : t.auth.verify.submit}
           <ArrowRight className="size-4" />
         </Button>
 
@@ -184,11 +186,12 @@ export function VerifyEmailForm() {
 }
 
 function ResendLine() {
+  const t = useT();
   return (
     <div className="text-center text-[12.5px] text-[color:var(--color-muted-foreground)]">
-      Didn&apos;t receive it?{" "}
+      {t.auth.verify.resendPrefix}{" "}
       <span className="font-semibold text-[color:var(--color-foreground)]">
-        Resend in 58s
+        {t.auth.verify.resendIn}
       </span>
     </div>
   );

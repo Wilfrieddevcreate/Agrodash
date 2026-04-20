@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Leaf, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/components/providers/language-provider";
 
 export function HeroCard({
   title,
@@ -22,6 +23,7 @@ export function HeroCard({
   highlightLabel?: string;
   className?: string;
 }) {
+  const t = useT();
   return (
     <motion.section
       initial={{ opacity: 0, y: 10 }}
@@ -45,7 +47,7 @@ export function HeroCard({
         <div className="min-w-0 flex-1">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-primary)]/20 bg-[color:var(--color-primary)]/8 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[color:var(--color-primary)]">
             <Sparkles className="size-3" />
-            Overview
+            {t.dashboard.overviewBadge}
           </div>
           <h2 className="mt-3 text-[22px] font-semibold leading-[1.2] tracking-[-0.02em] sm:text-[26px] md:text-[28px]">
             {title}
@@ -89,7 +91,7 @@ export function HeroCard({
                 <span className="absolute inset-0 animate-ping rounded-full bg-[color:var(--color-success)]/50" />
                 <span className="relative inline-flex size-2 rounded-full bg-[color:var(--color-success)]" />
               </span>
-              Live · synced just now
+              {t.dashboard.liveSynced}
             </div>
           </div>
         )}

@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/table";
 import { PageHeader } from "@/components/layout/page-header";
 import { InvoiceForm } from "@/components/invoices/invoice-form";
+import { useLanguage, useT } from "@/components/providers/language-provider";
 import { invoices as seedInvoices } from "@/lib/invoices-mock";
 import { customers } from "@/lib/mock-data";
 import type { Invoice, InvoiceStatus } from "@/lib/types";
@@ -60,14 +61,6 @@ const statusVariant: Record<
   draft: "secondary",
   overdue: "destructive",
   void: "outline",
-};
-
-const statusLabel: Record<InvoiceStatus, string> = {
-  paid: "Paid",
-  sent: "Sent",
-  draft: "Draft",
-  overdue: "Overdue",
-  void: "Void",
 };
 
 const PAGE_SIZE = 10;
@@ -256,6 +249,8 @@ const daysToPaySeries = [
  * ────────────────────────────────────────────────────────── */
 
 export function InvoicesPage() {
+  const t = useT();
+  const { locale } = useLanguage();
   const [search, setSearch] = React.useState("");
   const [status, setStatus] = React.useState<"all" | InvoiceStatus>("all");
   const [customerId, setCustomerId] = React.useState<string>("all");
@@ -263,6 +258,14 @@ export function InvoicesPage() {
   const [formOpen, setFormOpen] = React.useState(false);
 
   const stats = React.useMemo(() => computeStats(seedInvoices), []);
+
+  const statusLabel: Record<InvoiceStatus, string> = {
+    paid: t.invoices.status.paid,
+    sent: t.invoices.status.sent,
+    draft: t.invoices.status.draft,
+    overdue: t.invoices.status.overdue,
+    void: t.invoices.status.void,
+  };
 
   const filtered = React.useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -293,44 +296,46 @@ export function InvoicesPage() {
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const statusOptions = [
-    { label: "All statuses", value: "all" },
-    { label: "Paid", value: "paid" },
-    { label: "Sent", value: "sent" },
-    { label: "Draft", value: "draft" },
-    { label: "Overdue", value: "overdue" },
-    { label: "Void", value: "void" },
+    { label: t.invoices.filters.allStatuses, value: "all" },
+    { label: t.invoices.status.paid, value: "paid" },
+    { label: t.invoices.status.sent, value: "sent" },
+    { label: t.invoices.status.draft, value: "draft" },
+    { label: t.invoices.status.overdue, value: "overdue" },
+    { label: t.invoices.status.void, value: "void" },
   ];
 
   const customerOptions = [
-    { label: "All customers", value: "all" },
+    { label: t.invoices.filters.allCustomers, value: "all" },
     ...customers.map((c) => ({ label: c.name, value: c.id })),
   ];
+
+  const localeTag = locale === "fr" ? "fr-FR" : "en-US";
 
   return (
     <>
       <PageHeader
-        eyebrow="Billing"
-        title="Invoices"
-        description="Manage invoices, track payments, and reconcile with customers."
+        eyebrow={t.invoices.eyebrow}
+        title={t.invoices.title}
+        description={t.invoices.subtitle}
         actions={
           <>
             <Button
               size="sm"
               variant="outline"
               onClick={() =>
-                toast.success("Export started", {
-                  description: "CSV is being prepared…",
+                toast.success(t.invoices.toasts.exportStarted, {
+                  description: t.invoices.toasts.exportStartedDesc,
                 })
               }
             >
-              <Download /> Export CSV
+              <Download /> {t.invoices.export}
             </Button>
             <Button
               size="sm"
               variant="primary"
               onClick={() => setFormOpen(true)}
             >
-              <Plus /> New invoice
+              <Plus /> {t.invoices.add}
             </Button>
           </>
         }
@@ -344,36 +349,36 @@ export function InvoicesPage() {
         className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4"
       >
         <StatCard
-          label="Total outstanding"
+          label={t.invoices.kpi.outstanding}
           value={formatCurrency(stats.outstanding)}
-          helper="Sent + overdue invoices"
+          helper={t.invoices.kpi.outstandingHelper}
           delta={8.4}
           icon={<CircleDollarSign />}
           series={outstandingSeries}
           accentVar="--color-primary"
         />
         <StatCard
-          label="Paid this month"
+          label={t.invoices.kpi.paidMonth}
           value={formatCurrency(stats.paidThisMonth)}
-          helper="Last 30 days"
+          helper={t.invoices.kpi.paidMonthHelper}
           delta={12.6}
           icon={<CircleDollarSign />}
           series={paidSeries}
           accentVar="--color-success"
         />
         <StatCard
-          label="Overdue"
+          label={t.invoices.kpi.overdueCount}
           value={String(stats.overdueCount)}
-          helper="Invoices past due date"
+          helper={t.invoices.kpi.overdueCountHelper}
           delta={-3.2}
           icon={<Clock />}
           series={overdueSeries}
           accentVar="--color-destructive"
         />
         <StatCard
-          label="Avg. days to pay"
-          value={`${stats.avgDaysToPay} d`}
-          helper="Across paid invoices"
+          label={t.invoices.kpi.avgDaysToPay}
+          value={`${stats.avgDaysToPay} ${t.invoices.kpi.daysSuffix}`}
+          helper={t.invoices.kpi.avgDaysToPayHelper}
           delta={-5.1}
           icon={<CalendarClock />}
           series={daysToPaySeries}
@@ -389,7 +394,7 @@ export function InvoicesPage() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by invoice number or customer…"
+              placeholder={t.invoices.searchPlaceholder}
               className="pl-9"
             />
           </div>
@@ -414,15 +419,15 @@ export function InvoicesPage() {
         <div className="mt-5">
           <EmptyState
             icon={<FileText />}
-            title="No invoices found"
-            description="Try changing your filters or create a new invoice to get started."
+            title={t.invoices.empty.title}
+            description={t.invoices.empty.subtitle}
             action={
               <Button
                 size="sm"
                 variant="primary"
                 onClick={() => setFormOpen(true)}
               >
-                <Plus /> New invoice
+                <Plus /> {t.invoices.add}
               </Button>
             }
           />
@@ -459,7 +464,10 @@ export function InvoicesPage() {
                       </Badge>
                     </div>
                     <div className="mt-2 flex items-center justify-between gap-2 text-xs text-[color:var(--color-muted-foreground)]">
-                      <span>Due {formatDate(inv.dueDate)}</span>
+                      <span>
+                        {t.invoices.row.duePrefix}{" "}
+                        {formatDate(inv.dueDate, localeTag)}
+                      </span>
                       <span className="font-mono text-sm font-semibold tabular-nums text-[color:var(--color-foreground)]">
                         {formatCurrency(inv.total, inv.currency)}
                       </span>
@@ -475,12 +483,14 @@ export function InvoicesPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead>Invoice</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Issued</TableHead>
-                  <TableHead>Due</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t.invoices.columns.number}</TableHead>
+                  <TableHead>{t.invoices.columns.customer}</TableHead>
+                  <TableHead>{t.invoices.columns.issued}</TableHead>
+                  <TableHead>{t.invoices.columns.due}</TableHead>
+                  <TableHead className="text-right">
+                    {t.invoices.columns.amount}
+                  </TableHead>
+                  <TableHead>{t.invoices.columns.status}</TableHead>
                   <TableHead className="w-10" />
                 </TableRow>
               </TableHeader>
@@ -515,10 +525,10 @@ export function InvoicesPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-sm text-[color:var(--color-muted-foreground)]">
-                      {formatDate(inv.issueDate)}
+                      {formatDate(inv.issueDate, localeTag)}
                     </TableCell>
                     <TableCell className="text-sm text-[color:var(--color-muted-foreground)]">
-                      {formatDate(inv.dueDate)}
+                      {formatDate(inv.dueDate, localeTag)}
                     </TableCell>
                     <TableCell className="text-right font-mono font-semibold tabular-nums">
                       {formatCurrency(inv.total, inv.currency)}
@@ -533,7 +543,7 @@ export function InvoicesPage() {
                         trigger={
                           <button
                             type="button"
-                            aria-label="More actions"
+                            aria-label={t.invoices.row.moreActions}
                             className="inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)]"
                           >
                             <MoreHorizontal className="size-4" />
@@ -546,39 +556,39 @@ export function InvoicesPage() {
                             window.location.href = `/invoices/${inv.id}`;
                           }}
                         >
-                          View details
+                          {t.invoices.actions.view}
                         </DropdownItem>
                         <DropdownItem
                           icon={<Download className="size-4" />}
                           onClick={() =>
-                            toast.success("Download started", {
-                              description: `${inv.number}.pdf is being generated…`,
+                            toast.success(t.invoices.toasts.downloadStarted, {
+                              description: `${inv.number}${t.invoices.toasts.downloadStartedDescSuffix}`,
                             })
                           }
                         >
-                          Download PDF
+                          {t.invoices.actions.download}
                         </DropdownItem>
                         <DropdownItem
                           icon={<Send className="size-4" />}
                           onClick={() =>
-                            toast.success("Reminder sent", {
-                              description: `Email dispatched to ${inv.customerEmail}.`,
+                            toast.success(t.invoices.toasts.reminderSent, {
+                              description: `${t.invoices.toasts.reminderSentDescPrefix} ${inv.customerEmail}.`,
                             })
                           }
                         >
-                          Send reminder
+                          {t.invoices.actions.remind}
                         </DropdownItem>
                         <DropdownSeparator />
                         <DropdownItem
                           variant="destructive"
                           icon={<Trash2 className="size-4" />}
                           onClick={() =>
-                            toast.error("Invoice deleted", {
-                              description: `${inv.number} moved to trash.`,
+                            toast.error(t.invoices.toasts.deleted, {
+                              description: `${inv.number} ${t.invoices.toasts.deletedDescSuffix}`,
                             })
                           }
                         >
-                          Delete
+                          {t.invoices.actions.delete}
                         </DropdownItem>
                       </Dropdown>
                     </TableCell>

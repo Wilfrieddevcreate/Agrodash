@@ -57,7 +57,7 @@ export function CustomerDetail({ id }: { id: string }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => toast.success("Message opened")}
+            onClick={() => toast.success(t.customers.detail.toast.messageOpened)}
           >
             <MessageSquare />
             {t.customers.detail.sendMessage}
@@ -128,7 +128,7 @@ export function CustomerDetail({ id }: { id: string }) {
             <CardContent className="p-0">
               {custOrders.length === 0 ? (
                 <div className="px-6 py-10 text-center text-sm text-[color:var(--color-muted-foreground)]">
-                  No orders yet.
+                  {t.customers.detail.noOrders}
                 </div>
               ) : (
                 <Table>
