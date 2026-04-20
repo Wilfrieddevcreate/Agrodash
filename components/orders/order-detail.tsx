@@ -64,6 +64,7 @@ export function OrderDetail({ id }: { id: string }) {
         {t.orders.detail.back}
       </Link>
       <PageHeader
+        eyebrow={`Order · ${t.orders.status[order.status]}`}
         title={order.reference}
         description={`${t.orders.detail.summary} · ${formatDateTime(order.placedAt)}`}
         actions={

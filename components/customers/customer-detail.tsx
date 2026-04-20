@@ -50,6 +50,7 @@ export function CustomerDetail({ id }: { id: string }) {
       </Link>
 
       <PageHeader
+        eyebrow={`${t.customers.tiers[customer.tier]} · ${customer.country}`}
         title={customer.name}
         description={customer.email}
         actions={

@@ -61,14 +61,15 @@ export function RevenueChart() {
           tickFormatter={(v) => formatCompact(v)}
         />
         <Tooltip
-          cursor={{ fill: "var(--color-muted)", opacity: 0.35 }}
+          cursor={{ fill: "var(--color-muted)", opacity: 0.4 }}
           contentStyle={{
             background: "var(--color-popover)",
             border: "1px solid var(--color-border)",
-            borderRadius: 10,
+            borderRadius: 12,
             fontSize: 12,
-            padding: "8px 12px",
-            boxShadow: "0 10px 30px -10px rgba(0,0,0,0.25)",
+            padding: "10px 14px",
+            boxShadow:
+              "0 10px 32px -12px oklch(0.2 0.02 155 / 0.18), 0 4px 8px -4px oklch(0.2 0.02 155 / 0.08)",
           }}
           labelStyle={{ color: "var(--color-muted-foreground)", fontWeight: 500 }}
           formatter={(value, name) => {
@@ -150,9 +151,11 @@ export function StockLevelsChart({
           contentStyle={{
             background: "var(--color-popover)",
             border: "1px solid var(--color-border)",
-            borderRadius: 10,
+            borderRadius: 12,
             fontSize: 12,
-            padding: "8px 12px",
+            padding: "10px 14px",
+            boxShadow:
+              "0 10px 32px -12px oklch(0.2 0.02 155 / 0.18), 0 4px 8px -4px oklch(0.2 0.02 155 / 0.08)",
           }}
         />
         <Bar

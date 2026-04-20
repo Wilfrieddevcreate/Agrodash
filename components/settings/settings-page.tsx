@@ -39,6 +39,7 @@ export function SettingsPage() {
   return (
     <>
       <PageHeader
+        eyebrow="Workspace"
         title={t.settings.title}
         description={t.settings.subtitle}
       />

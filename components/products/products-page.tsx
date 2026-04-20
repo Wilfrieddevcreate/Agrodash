@@ -104,6 +104,7 @@ export function ProductsPage() {
   return (
     <>
       <PageHeader
+        eyebrow="Inventory"
         title={t.products.title}
         description={t.products.subtitle}
         actions={
@@ -120,7 +121,7 @@ export function ProductsPage() {
         }
       />
 
-      <Card>
+      <Card variant="flat" className="border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 shadow-none">
         <CardContent className="flex flex-col gap-3 p-3 sm:p-4 lg:flex-row lg:items-center lg:gap-3">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
