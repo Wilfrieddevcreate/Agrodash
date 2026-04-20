@@ -249,15 +249,24 @@ export function DateRange({
   // SSR-safe: only initialize "viewMonth" on the client.
   const [viewMonth, setViewMonth] = React.useState<Date | null>(null);
   const [isDesktop, setIsDesktop] = React.useState<boolean>(true);
+  // Two-calendar view needs ~665px of room; collapse to one below that.
+  const [showTwoMonths, setShowTwoMonths] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     // Defer Date-based initialization to the client.
     setViewMonth(value.from ?? startOfMonth(new Date()));
     const mq = window.matchMedia("(min-width: 640px)");
+    const mqWide = window.matchMedia("(min-width: 900px)");
     setIsDesktop(mq.matches);
+    setShowTwoMonths(mqWide.matches);
     const onChangeMq = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    const onChangeWide = (e: MediaQueryListEvent) => setShowTwoMonths(e.matches);
     mq.addEventListener("change", onChangeMq);
-    return () => mq.removeEventListener("change", onChangeMq);
+    mqWide.addEventListener("change", onChangeWide);
+    return () => {
+      mq.removeEventListener("change", onChangeMq);
+      mqWide.removeEventListener("change", onChangeWide);
+    };
   }, [value.from]);
 
   // Keep draft in sync when value changes from outside or popover reopens
@@ -397,7 +406,10 @@ export function DateRange({
           role="dialog"
           aria-label={resolvedLabels.pickRange}
           className={cn(
-            "animate-fade-in-up absolute left-0 z-50 mt-1.5 overflow-hidden rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-popover)] shadow-elev-lg",
+            // end-0 (logical) anchors to the inline-end edge of the trigger —
+            // extends leftward in LTR, rightward in RTL — keeping the panel
+            // inside the viewport when the trigger sits near the end of a toolbar.
+            "animate-fade-in-up absolute end-0 z-50 mt-1.5 overflow-hidden rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-popover)] shadow-elev-lg",
             // Mobile: full-ish width near trigger. Desktop: big 2-column.
             "w-[min(92vw,320px)] sm:w-auto"
           )}
@@ -427,18 +439,20 @@ export function DateRange({
                     onPrev={() => setViewMonth(addMonths(viewMonth, -1))}
                     onNext={() => setViewMonth(addMonths(viewMonth, 1))}
                     showPrev
-                    showNext={false}
+                    showNext={!showTwoMonths}
                   />
-                  <MonthCalendar
-                    month={addMonths(viewMonth, 1)}
-                    draft={draft}
-                    labels={resolvedLabels}
-                    onDayClick={handleDayClick}
-                    onPrev={() => setViewMonth(addMonths(viewMonth, -1))}
-                    onNext={() => setViewMonth(addMonths(viewMonth, 1))}
-                    showPrev={false}
-                    showNext
-                  />
+                  {showTwoMonths && (
+                    <MonthCalendar
+                      month={addMonths(viewMonth, 1)}
+                      draft={draft}
+                      labels={resolvedLabels}
+                      onDayClick={handleDayClick}
+                      onPrev={() => setViewMonth(addMonths(viewMonth, -1))}
+                      onNext={() => setViewMonth(addMonths(viewMonth, 1))}
+                      showPrev={false}
+                      showNext
+                    />
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between gap-2 border-t border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 px-3 py-2">

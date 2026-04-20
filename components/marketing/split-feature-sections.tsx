@@ -241,9 +241,9 @@ function RegionsVisual() {
           </div>
         </div>
 
-        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)] gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)]">
           {/* Stylised Africa */}
-          <div className="relative aspect-[3/4] rounded-xl bg-[color:var(--color-muted)]/40 p-3">
+          <div className="relative aspect-square rounded-xl bg-[color:var(--color-muted)]/40 p-3 sm:aspect-[4/5]">
             <svg
               viewBox="0 0 640 640"
               className="h-full w-full"

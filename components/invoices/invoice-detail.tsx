@@ -283,7 +283,7 @@ export function InvoiceDetail({ id }: { id: string }) {
                   {invoice.customerAddress}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-1 sm:gap-2">
+              <div className="grid grid-cols-2 gap-3 text-sm sm:gap-4">
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-muted-foreground)]">
                     {t.invoices.detail.issueDate}

@@ -68,7 +68,7 @@ export function AnalyticsPage() {
       />
 
       {/* KPI strip */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         <StatMini label={t.analytics.stats.revenue} value="$1.04M" delta={18.2} />
         <StatMini label={t.analytics.stats.orders} value="6,842" delta={8.4} />
         <StatMini label={t.analytics.stats.aov} value="$152" delta={3.1} />

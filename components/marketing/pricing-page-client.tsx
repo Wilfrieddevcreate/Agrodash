@@ -91,7 +91,7 @@ export function PricingPageClient() {
       {/* Plans */}
       <section className="relative pb-20 sm:pb-24 lg:pb-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {keys.map((k, i) => {
               const plan = t.pricing.plans[k];
               const price = annual ? plan.priceAnnual : plan.priceMonthly;

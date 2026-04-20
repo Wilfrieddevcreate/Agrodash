@@ -117,7 +117,7 @@ export function MonthGrid({
                 key={key + "-" + i}
                 onClick={() => onCellClick?.(cell)}
                 className={cn(
-                  "group relative flex min-h-[112px] flex-col gap-1 border-b border-r border-[color:var(--color-border)] p-1.5 text-left",
+                  "group relative flex min-h-[84px] flex-col gap-1 border-b border-r border-[color:var(--color-border)] p-1.5 text-left sm:min-h-[96px] lg:min-h-[112px]",
                   "transition-colors hover:bg-[color:var(--color-muted)]/40",
                   "focus-visible:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--color-ring)]/40",
                   // Remove right border on last column, bottom border on last row

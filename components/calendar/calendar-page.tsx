@@ -218,10 +218,12 @@ function ResponsiveLayout({
 }) {
   return (
     <>
-      {/* Mobile: agenda list only */}
-      <div className="md:hidden">{mobileAgenda}</div>
-      {/* md+: grid + side column */}
-      <div className="hidden gap-4 md:grid md:grid-cols-[1fr_320px]">
+      {/* Mobile + tablet: agenda list only. At md+ with the fixed 260px sidebar
+          the usable content width can be as low as ~450px, which leaves no
+          room for a 320px aside — only split once we clear lg. */}
+      <div className="lg:hidden">{mobileAgenda}</div>
+      {/* lg+: grid + side column */}
+      <div className="hidden gap-4 lg:grid lg:grid-cols-[1fr_320px]">
         <div className="min-w-0">{grid}</div>
         <div className="min-w-0">{aside}</div>
       </div>
