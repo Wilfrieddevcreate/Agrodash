@@ -19,22 +19,32 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-10 text-center",
+        "relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-10 text-center",
         className
       )}
     >
+      {/* Subtle grid pattern backdrop */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(circle_at_center,black,transparent_70%)]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, color-mix(in oklab, var(--color-border) 70%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--color-border) 70%, transparent) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
       {icon && (
-        <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-[color:var(--color-card)] text-[color:var(--color-muted-foreground)] ring-1 ring-[color:var(--color-border)] [&_svg]:size-5">
+        <div className="relative mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-[color:var(--color-card)] text-[color:var(--color-muted-foreground)] shadow-elev-sm ring-1 ring-[color:var(--color-border)] [&_svg]:size-6">
           {icon}
         </div>
       )}
-      <h3 className="text-base font-semibold">{title}</h3>
+      <h3 className="relative text-base font-semibold">{title}</h3>
       {description && (
-        <p className="mt-1 max-w-sm text-sm text-[color:var(--color-muted-foreground)]">
+        <p className="relative mt-1 max-w-sm text-sm leading-relaxed text-[color:var(--color-muted-foreground)]">
           {description}
         </p>
       )}
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="relative mt-5">{action}</div>}
     </div>
   );
 }

@@ -4,10 +4,8 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
-  Download,
   DollarSign,
   Package,
-  Plus,
   ShoppingBag,
   Users,
 } from "lucide-react";
@@ -15,11 +13,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HeroCard } from "@/components/dashboard/hero-card";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { RevenueChart, StockLevelsChart } from "@/components/dashboard/revenue-chart";
 import { CategoryDonut } from "@/components/dashboard/category-donut";
 import { ActivityList } from "@/components/dashboard/activity-list";
-import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import { orders, products, stockLevels } from "@/lib/mock-data";
 import { formatCompact, formatCurrency, relativeTime } from "@/lib/utils";
@@ -57,32 +55,23 @@ export function DashboardPage() {
 
   return (
     <>
-      <PageHeader
+      <HeroCard
         title={t.dashboard.title}
-        description={t.dashboard.subtitle}
-        actions={
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => toast.success("Export started")}
-            >
-              <Download />
-              {t.dashboard.export}
-            </Button>
-            <Button
-              size="sm"
-              onClick={() =>
-                toast.success("New order drawer", {
-                  description: "This would open the order wizard.",
-                })
-              }
-            >
-              <Plus />
-              {t.dashboard.newOrder}
-            </Button>
-          </>
-        }
+        subtitle={t.dashboard.subtitle}
+        highlightValue={formatCurrency(932840)}
+        highlightLabel="This month"
+        primaryCta={{
+          label: t.dashboard.newOrder,
+          onClick: () =>
+            toast.success("New order drawer", {
+              description: "This would open the order wizard.",
+            }),
+        }}
+        secondaryCta={{
+          label: t.dashboard.export,
+          onClick: () => toast.success("Export started"),
+        }}
+        className="mb-6"
       />
 
       {/* KPIs */}
