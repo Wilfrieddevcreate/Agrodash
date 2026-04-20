@@ -205,16 +205,17 @@ function InvoiceVisual() {
 
 type Dot = { x: number; y: number; name: string };
 
+// Dot coords are tuned to the continent path below (viewBox 0 0 640 640).
 const DOTS: Dot[] = [
-  { x: 170, y: 140, name: "Morocco" },
-  { x: 198, y: 232, name: "Senegal" },
-  { x: 240, y: 250, name: "Côte d'Ivoire" },
-  { x: 268, y: 262, name: "Ghana" },
-  { x: 300, y: 270, name: "Nigeria" },
-  { x: 430, y: 298, name: "Ethiopia" },
-  { x: 430, y: 340, name: "Kenya" },
-  { x: 420, y: 378, name: "Rwanda" },
-  { x: 360, y: 478, name: "South Africa" },
+  { x: 215, y: 118, name: "Morocco" },
+  { x: 190, y: 245, name: "Senegal" },
+  { x: 238, y: 278, name: "Côte d'Ivoire" },
+  { x: 268, y: 286, name: "Ghana" },
+  { x: 310, y: 288, name: "Nigeria" },
+  { x: 452, y: 268, name: "Ethiopia" },
+  { x: 452, y: 340, name: "Kenya" },
+  { x: 430, y: 360, name: "Rwanda" },
+  { x: 370, y: 510, name: "South Africa" },
 ];
 
 function RegionsVisual() {
@@ -249,30 +250,46 @@ function RegionsVisual() {
               role="img"
               aria-label="Stylised map of Africa"
             >
-              {/* Stylised continent outline — approximate, decorative */}
+              {/* Stylised continent outline — recognisable Africa silhouette */}
               <path
-                d="M240 85
-                   C 305 70, 405 80, 450 130
-                   C 490 175, 505 215, 495 255
-                   C 510 295, 525 335, 510 380
-                   C 500 425, 470 455, 445 495
-                   C 420 530, 405 565, 370 570
-                   C 340 573, 315 555, 300 525
-                   C 280 500, 258 470, 235 445
-                   C 215 425, 195 405, 180 380
-                   C 168 355, 160 320, 158 285
-                   C 155 245, 162 205, 175 170
-                   C 190 135, 210 100, 240 85 Z"
+                d="M188 108
+                   C 208 98, 238 94, 268 96
+                   L 318 96
+                   C 358 96, 398 100, 432 112
+                   C 460 122, 478 138, 482 158
+                   C 484 178, 476 196, 472 214
+                   C 470 230, 478 244, 488 252
+                   C 502 262, 512 276, 510 294
+                   C 506 314, 494 330, 480 344
+                   C 472 354, 470 366, 474 380
+                   C 478 400, 478 420, 468 440
+                   C 456 462, 442 482, 426 502
+                   C 410 522, 394 540, 372 548
+                   C 350 554, 328 548, 310 536
+                   C 292 522, 280 500, 272 478
+                   C 262 452, 250 428, 234 408
+                   C 218 390, 200 374, 186 354
+                   C 172 332, 164 306, 164 278
+                   C 162 252, 162 226, 158 202
+                   C 154 180, 154 158, 162 138
+                   C 168 124, 176 114, 188 108 Z"
                 fill="color-mix(in oklab, var(--color-primary) 10%, transparent)"
-                stroke="color-mix(in oklab, var(--color-primary) 40%, transparent)"
+                stroke="color-mix(in oklab, var(--color-primary) 45%, transparent)"
                 strokeWidth="1.5"
+                strokeLinejoin="round"
               />
               {/* Madagascar */}
               <path
-                d="M505 410 C 520 420, 525 455, 515 485 C 505 510, 495 505, 495 490 C 495 470, 495 435, 505 410 Z"
+                d="M508 418
+                   C 518 424, 522 442, 520 462
+                   C 518 482, 512 498, 504 502
+                   C 498 504, 494 496, 494 484
+                   C 494 464, 498 442, 502 428
+                   C 504 422, 506 418, 508 418 Z"
                 fill="color-mix(in oklab, var(--color-primary) 10%, transparent)"
-                stroke="color-mix(in oklab, var(--color-primary) 40%, transparent)"
+                stroke="color-mix(in oklab, var(--color-primary) 45%, transparent)"
                 strokeWidth="1.5"
+                strokeLinejoin="round"
               />
               {/* Dots */}
               {DOTS.map((d) => (
