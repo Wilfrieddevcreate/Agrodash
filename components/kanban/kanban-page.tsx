@@ -216,31 +216,28 @@ export function KanbanPage() {
 
   function handleReorder(columnId: KanbanColumnId, nextIds: string[]) {
     setCards((prev) => {
-      const inColumn: KanbanCard[] = [];
-      const outside: KanbanCard[] = [];
-      for (const c of prev) {
-        if (c.columnId === columnId) inColumn.push(c);
-        else outside.push(c);
+      // Order is tracked relative to the first card of this column in the
+      // master list; everything outside the column keeps its position.
+      const byId = new Map(prev.map((c) => [c.id, c]));
+      const reordered: KanbanCard[] = [];
+      for (const id of nextIds) {
+        const match = byId.get(id);
+        if (match && match.columnId === columnId) reordered.push(match);
       }
-      const byId = new Map(inColumn.map((c) => [c.id, c]));
-      const reordered = nextIds
-        .map((id) => byId.get(id))
-        .filter((c): c is KanbanCard => Boolean(c));
-      // Preserve column order in the overall list:
-      // keep `outside` order untouched, splice the column back in the same
-      // relative position as the first column card previously held.
-      const firstIdx = prev.findIndex((c) => c.columnId === columnId);
+      if (reordered.length === 0) return prev;
+
+      const reorderedIds = new Set(reordered.map((c) => c.id));
+      const firstIdx = prev.findIndex((c) => reorderedIds.has(c.id));
       if (firstIdx === -1) return prev;
-      const merged = [...outside];
-      // Insert at the mapped "firstIdx" after excluding inColumn items
+
+      const withoutColumn = prev.filter((c) => !reorderedIds.has(c.id));
+      // Count how many non-column cards precede the original first slot
       let insertAt = 0;
-      let seen = 0;
-      for (let i = 0; i < prev.length && i < firstIdx; i++) {
-        if (prev[i].columnId !== columnId) seen += 1;
+      for (let i = 0; i < firstIdx; i++) {
+        if (!reorderedIds.has(prev[i].id)) insertAt += 1;
       }
-      insertAt = seen;
-      merged.splice(insertAt, 0, ...reordered);
-      return merged;
+      withoutColumn.splice(insertAt, 0, ...reordered);
+      return withoutColumn;
     });
   }
 
