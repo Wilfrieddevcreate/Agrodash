@@ -18,7 +18,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <div
         className={cn(
           "flex min-h-screen min-w-0 flex-col transition-[padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          collapsed ? "lg:pl-[80px]" : "lg:pl-[260px]"
+          // `ps-*` is padding-inline-start — flips with direction so the
+          // content never overlaps the sidebar in RTL.
+          collapsed ? "lg:ps-[80px]" : "lg:ps-[260px]"
         )}
       >
         <Header />

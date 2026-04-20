@@ -5,6 +5,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://agrodash.example.c
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     "",
+    "/pricing",
+    "/dashboard",
     "/products",
     "/orders",
     "/customers",
@@ -13,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/kanban",
     "/analytics",
     "/settings",
+    "/help",
     "/login",
     "/register",
     "/forgot-password",

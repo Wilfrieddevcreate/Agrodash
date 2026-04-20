@@ -1,9 +1,15 @@
-export type Locale = "en" | "fr";
+export type Locale = "en" | "fr" | "ar";
 
-export const locales: Locale[] = ["en", "fr"];
+export const locales: Locale[] = ["en", "fr", "ar"];
 
-export const dictionaries = {
-  en: {
+/** Locales whose UI should render right-to-left */
+export const rtlLocales: Locale[] = ["ar"];
+
+export function isRtl(l: Locale): boolean {
+  return rtlLocales.includes(l);
+}
+
+const en = {
     app: {
       name: "AgroDash",
       tagline: "Agribusiness Management",
@@ -714,6 +720,150 @@ export const dictionaries = {
         titleRequired: "Title is required",
       },
     },
+    commandPalette: {
+      placeholder: "Type a command or search…",
+      close: "Close",
+      groups: {
+        navigation: "Navigation",
+        quickActions: "Quick actions",
+        recent: "Recently viewed",
+      },
+      actions: {
+        newOrder: "New order",
+        newOrderDesc: "Start a blank order draft",
+        newInvoice: "New invoice",
+        newInvoiceDesc: "Create an invoice from scratch",
+        newTask: "New task",
+        newTaskDesc: "Add a task to the board",
+        newEvent: "New event",
+        newEventDesc: "Schedule something on the calendar",
+        toggleTheme: "Toggle theme",
+        toggleThemeDesc: "Switch between light and dark",
+        switchToFrench: "Switch to French",
+        switchToEnglish: "Switch to English",
+        switchLanguageDesc: "Change the interface language",
+        goToProfile: "Go to profile",
+        goToProfileDesc: "View and edit your account",
+        logOut: "Log out",
+        logOutDesc: "End your current session",
+      },
+      nav: {
+        dashboardDesc: "Overview of your operations",
+        productsDesc: "Catalog and inventory",
+        ordersDesc: "Fulfillment pipeline",
+        customersDesc: "Farmers, coops and distributors",
+        invoicesDesc: "Billing and receivables",
+        calendarDesc: "Planning and events",
+        kanbanDesc: "Operational board",
+        analyticsDesc: "Insights and reports",
+        settingsDesc: "Workspace preferences",
+      },
+      recent: {
+        latestOrder: "Order ADX-2067",
+        latestOrderDesc: "Kwame Mensah · 3 items",
+        latestCustomer: "Savana Harvest Coop",
+        latestCustomerDesc: "Burkina Faso · Cooperative",
+        latestInvoice: "INV-2026-0042",
+        latestInvoiceDesc: "Amara Diallo · $3,240",
+      },
+      empty: {
+        title: "No results for “{query}”",
+        subtitle: "Try searching for pages, actions or recent items.",
+      },
+      toasts: {
+        newOrderTitle: "New order",
+        newOrderDesc: "Command palette triggered a new order flow.",
+        newInvoiceTitle: "New invoice",
+        newInvoiceDesc: "Command palette triggered a new invoice flow.",
+        newTaskTitle: "New task",
+        newTaskDesc: "Command palette triggered a new task flow.",
+        newEventTitle: "New event",
+        newEventDesc: "Command palette triggered a new event flow.",
+        loggingOut: "Logging out…",
+        loggingOutDesc: "This is a demo — no real session to end.",
+      },
+    },
+    shortcuts: {
+      title: "Keyboard shortcuts",
+      subtitle: "Glide through AgroDash with your keyboard.",
+      groups: {
+        general: "General",
+        navigation: "Navigation",
+        actions: "Actions",
+      },
+      items: {
+        openPalette: "Open command palette",
+        toggleSidebar: "Toggle sidebar",
+        showShortcuts: "Show shortcuts",
+        toggleTheme: "Toggle theme",
+        switchLanguage: "Switch language",
+        goDashboard: "Go to Dashboard",
+        goProducts: "Go to Products",
+        goOrders: "Go to Orders",
+        goCustomers: "Go to Customers",
+        goInvoices: "Go to Invoices",
+        goCalendar: "Go to Calendar",
+        goKanban: "Go to Board",
+        goAnalytics: "Go to Analytics",
+        goSettings: "Go to Settings",
+        newOrder: "New order",
+        newInvoice: "New invoice",
+        newTask: "New task",
+        newEvent: "New event",
+      },
+      hint: "Press",
+      then: "then",
+      toasts: {
+        themeToggled: "Theme toggled",
+        languageSwitched: "Language switched",
+      },
+    },
+    errors: {
+      app: {
+        eyebrow: "Something broke",
+        title: "Something went wrong",
+        subtitle:
+          "An unexpected error occurred. It has been reported to our team — you can try again or head back to the dashboard.",
+        digestLabel: "Error ID",
+        tryAgain: "Try again",
+        backToDashboard: "Back to dashboard",
+      },
+      dashboard: {
+        title: "This section failed to load",
+        subtitle:
+          "We couldn't render this page. Try reloading — if the problem persists, contact support.",
+        tryAgain: "Try again",
+        goHome: "Go home",
+      },
+      notFound: {
+        eyebrow: "Lost in the fields",
+        title: "Page not found",
+        subtitle:
+          "The page you're looking for has been harvested, moved, or never existed.",
+        goHome: "Back to dashboard",
+        goBack: "Go back",
+      },
+      maintenance: {
+        eyebrow: "Scheduled maintenance",
+        title: "We'll be right back",
+        subtitle:
+          "AgroDash is undergoing a quick tune-up. Back in about 30 minutes.",
+        status: "All systems updating",
+        checkStatus: "Check status",
+        notifyLabel: "Email me when ready",
+        notifyPlaceholder: "you@company.com",
+        notifyCta: "Notify me",
+        notifyToast: "You're on the list",
+        notifyToastDesc: "We'll email you the moment AgroDash is back.",
+        affectedServices: "Affected services",
+        services: {
+          api: "Public API",
+          dashboard: "Dashboard",
+          billing: "Billing",
+          webhooks: "Webhooks",
+        },
+      },
+    },
     kanban: {
       title: "Board",
       subtitle:
@@ -813,8 +963,534 @@ export const dictionaries = {
       noMatches: "No matches",
       noMatchesDesc: "Try adjusting your filters.",
     },
-  },
-  fr: {
+    help: {
+      eyebrow: "Support",
+      title: "How can we help?",
+      subtitle: "Guides, integrations, FAQs and a team that actually answers.",
+      searchPlaceholder: "Search articles, guides, integrations…",
+      popular: "Popular",
+      popularTerms: [
+        "Getting started",
+        "Invoicing",
+        "Keyboard shortcuts",
+        "Exporting data",
+        "Permissions",
+      ],
+      categories: {
+        gettingStarted: {
+          title: "Getting started",
+          articles: "12 articles",
+          desc: "Your first week with AgroDash — from onboarding to your first harvest.",
+        },
+        dashboard: {
+          title: "Dashboard & data",
+          articles: "18 articles",
+          desc: "Customize widgets, filter reports and explore every KPI.",
+        },
+        orders: {
+          title: "Orders & fulfilment",
+          articles: "14 articles",
+          desc: "From quote to delivery — automate your fulfilment pipeline.",
+        },
+        invoices: {
+          title: "Invoicing & payments",
+          articles: "9 articles",
+          desc: "Issue invoices, accept payments and reconcile in minutes.",
+        },
+        integrations: {
+          title: "Integrations",
+          articles: "22 articles",
+          desc: "Connect Stripe, Wave, Excel, webhooks and more.",
+        },
+        security: {
+          title: "Security & privacy",
+          articles: "7 articles",
+          desc: "Encryption, 2FA, SSO and how we handle your data.",
+        },
+      },
+      popularArticlesTitle: "Popular this week",
+      articles: [
+        { title: "Setting up your first farm", readTime: "3 min read" },
+        { title: "Linking a payment provider", readTime: "4 min read" },
+        { title: "Understanding stock alerts", readTime: "2 min read" },
+        { title: "Inviting teammates and roles", readTime: "5 min read" },
+        { title: "Exporting reports to Excel", readTime: "3 min read" },
+        { title: "Automating order follow-ups", readTime: "6 min read" },
+      ],
+      faqTitle: "Frequently asked questions",
+      faq: [
+        {
+          q: "How do I invite my team?",
+          a: "Go to Settings → Team and send an invite link. You can assign roles (Admin, Operations, Viewer) at any time — no seat fee per invite.",
+        },
+        {
+          q: "Can I import from Excel or CSV?",
+          a: "Yes. Every list view (Products, Customers, Orders, Invoices) has an Import button that supports .xlsx and .csv with column mapping and preview before commit.",
+        },
+        {
+          q: "Does AgroDash work offline?",
+          a: "The dashboard requires a connection, but the mobile companion caches your last 7 days of orders and lets you record activity offline — it syncs when you're back online.",
+        },
+        {
+          q: "How do I enable two-factor auth?",
+          a: "From Settings → Security, enable 2FA via authenticator app or SMS. We strongly recommend enabling it for every account with billing access.",
+        },
+        {
+          q: "Can I white-label the dashboard?",
+          a: "The Business plan lets you customize the logo, accent color, and email domain. Full white-label (your own CNAME) is available on the Enterprise plan.",
+        },
+        {
+          q: "Is data encrypted at rest?",
+          a: "Yes — AES-256 at rest, TLS 1.3 in transit. Backups are encrypted and stored in a separate region. A SOC 2 Type II report is available on request.",
+        },
+        {
+          q: "How are invoices computed?",
+          a: "Each line item uses unit price × quantity, with VAT (7.5% by default) applied on the subtotal. You can override the tax rate or disable tax per invoice.",
+        },
+        {
+          q: "What's in the free plan?",
+          a: "Up to 2 users, 100 active products, basic analytics and email support. It's meant for trying AgroDash end-to-end before committing to Growth.",
+        },
+      ],
+      contact: {
+        title: "Still stuck? We're here",
+        desc: "Our team is on hand Monday to Saturday, 7am to 9pm GMT. Most answers land in under two hours.",
+        email: "Email support",
+        ticketCta: "Open a ticket",
+        ticketDialog: {
+          title: "Open a support ticket",
+          subjectLabel: "Subject",
+          categoryLabel: "Category",
+          priorityLabel: "Priority",
+          descLabel: "Description",
+          submit: "Send ticket",
+          cancel: "Cancel",
+          toastSuccess: "Ticket sent",
+          toastSuccessDesc: "Our team will reply within 2 hours.",
+          priorities: {
+            low: "Low",
+            medium: "Medium",
+            high: "High",
+          },
+          categories: [
+            "Billing & invoices",
+            "Orders & fulfilment",
+            "Integrations",
+            "Bug report",
+            "Feature request",
+          ],
+        },
+      },
+      stats: {
+        responseTime: "Average response time: 2h",
+        satisfaction: "Satisfaction: 4.9/5",
+        languages: "Available in EN + FR",
+      },
+      browse: "Browse",
+      readTime: "read",
+      toasts: {
+        noResults: "No results yet, try 'invoices' or 'shortcuts'",
+      },
+    },
+    dateRange: {
+      pickRange: "Pick a range",
+      apply: "Apply",
+      reset: "Reset",
+      custom: "Custom",
+      presets: {
+        today: "Today",
+        yesterday: "Yesterday",
+        last7: "Last 7 days",
+        last30: "Last 30 days",
+        thisMonth: "This month",
+        lastMonth: "Last month",
+        thisQuarter: "This quarter",
+        last12: "Last 12 months",
+        custom: "Custom",
+      },
+      separator: " – ",
+      monthsShort: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      weekdaysShort: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    },
+    marketing: {
+      nav: {
+        features: "Features",
+        pricing: "Pricing",
+        faq: "FAQ",
+        docs: "Docs",
+        github: "GitHub",
+        signIn: "Sign in",
+        openDashboard: "Open dashboard",
+        openMenu: "Open menu",
+        closeMenu: "Close menu",
+      },
+      hero: {
+        eyebrow: "New · v1.0 shipped",
+        title: "The operating system for modern agribusiness.",
+        subtitle:
+          "Plan harvests, track inventory, fulfil orders and invoice customers — all from one workspace built for farms, cooperatives and agri-distributors.",
+        primaryCta: "Get started",
+        secondaryCta: "View live demo",
+        trustLine:
+          "Trusted by 2,400+ farms and cooperatives across 18 countries.",
+        badgeLive: "Live dashboard",
+        peripheralOrder: "New order · Lagos",
+        peripheralOrderMeta: "3 minutes ago",
+        peripheralHarvest: "Harvest on track",
+        peripheralHarvestMeta: "+12% vs. last season",
+      },
+      logos: {
+        title: "Trusted by teams at",
+      },
+      features: {
+        eyebrow: "Everything you need",
+        title: "One workspace. Every farm. Every crop.",
+        subtitle:
+          "AgroDash brings your fields, depots, orders and finances into a single operational view — no more spreadsheets, no more guesswork.",
+        items: {
+          stock: {
+            title: "Real-time stock",
+            desc: "Track every field, depot and shipment with live counts and automatic reorder alerts.",
+          },
+          orders: {
+            title: "Orders & fulfilment",
+            desc: "Quote, pick, pack and deliver from a single pipeline wired to your logistics team.",
+          },
+          invoicing: {
+            title: "Smart invoicing",
+            desc: "Generate invoices with VAT, track payments and send reminders without leaving AgroDash.",
+          },
+          calendar: {
+            title: "Calendar & planning",
+            desc: "Schedule harvests, inspections and trainings on a shared calendar your whole team sees.",
+          },
+          kanban: {
+            title: "Team Kanban",
+            desc: "Coordinate compliance, logistics and fieldwork with a board purpose-built for agri ops.",
+          },
+          analytics: {
+            title: "Deep analytics",
+            desc: "Break down revenue by region, category and customer to find your next growth lever.",
+          },
+        },
+      },
+      splits: {
+        eyebrow: "Built for the way you operate",
+        supplyChain: {
+          eyebrow: "Operations",
+          title: "See your entire supply chain at a glance.",
+          desc: "Every order, every depot, every delivery — rolled up in live dashboards so nothing slips through the cracks. Drill down from a region to a single truck in two clicks.",
+          bullet1: "Live order and revenue streams across all regions",
+          bullet2: "Category-level insights that actually drive decisions",
+          bullet3: "Export any view to CSV or PDF in one click",
+        },
+        harvestInvoice: {
+          eyebrow: "Revenue",
+          title: "From harvest to invoice in minutes.",
+          desc: "Turn every delivery into a clean, branded invoice with VAT, payment tracking and automatic reminders. Your finance team will thank you.",
+          bullet1: "Branded PDF invoices with VAT and localised currency",
+          bullet2: "Payment tracking with mobile-money and bank references",
+          bullet3: "Automatic reminders for overdue receivables",
+        },
+        regions: {
+          eyebrow: "Global by design",
+          title: "Built for teams across every region.",
+          desc: "Designed hand-in-hand with farms and cooperatives across Africa. Bilingual out of the box, multi-currency, and ready for your regional realities.",
+          bullet1: "English and French interfaces, more on the way",
+          bullet2: "Multi-currency with local formatting",
+          bullet3: "Region-specific reports your board will understand",
+          countries: [
+            "Senegal",
+            "Côte d'Ivoire",
+            "Ghana",
+            "Nigeria",
+            "Kenya",
+            "Rwanda",
+            "Ethiopia",
+            "South Africa",
+            "Morocco",
+          ],
+        },
+      },
+      testimonials: {
+        eyebrow: "Loved by operators",
+        title: "Loved by agribusiness leaders.",
+        subtitle:
+          "Real feedback from teams running real operations on AgroDash.",
+        items: {
+          one: {
+            quote: "We cut order-to-delivery time from 48h to 12h.",
+            name: "Amara Diallo",
+            role: "CEO",
+            company: "Sahel Coop",
+          },
+          two: {
+            quote:
+              "Finally a dashboard that understands our regional realities.",
+            name: "Kwame Mensah",
+            role: "Operations lead",
+            company: "Ghana Harvest",
+          },
+          three: {
+            quote: "The invoicing alone saved us two accountants.",
+            name: "Mmabatho Nkosi",
+            role: "CFO",
+            company: "Karoo Farms",
+          },
+        },
+      },
+      pricingPreview: {
+        eyebrow: "Pricing",
+        title: "Simple, transparent pricing.",
+        subtitle: "Start free. Scale when you're ready. Cancel anytime.",
+        seeAll: "See full pricing",
+        monthSuffix: "/mo",
+        plans: {
+          starter: {
+            name: "Starter",
+            price: "$0",
+            desc: "For a single farm getting started.",
+            cta: "Start free",
+          },
+          growth: {
+            name: "Growth",
+            price: "$49",
+            desc: "For growing cooperatives and distributors.",
+            cta: "Upgrade",
+          },
+          enterprise: {
+            name: "Enterprise",
+            price: "Custom",
+            desc: "For multi-region operators and agri-groups.",
+            cta: "Talk to sales",
+          },
+        },
+        mostPopular: "Most popular",
+      },
+      faq: {
+        eyebrow: "FAQ",
+        title: "Questions, answered.",
+        subtitle:
+          "Everything you need to know before you start using AgroDash.",
+        items: [
+          {
+            q: "Can I self-host AgroDash?",
+            a: "Yes. AgroDash ships as a Next.js application you can deploy to Vercel, a VPS, or your own Kubernetes cluster. The code is yours and there are no hidden runtimes.",
+          },
+          {
+            q: "Do you support French and other languages?",
+            a: "English and French are available today with full UI coverage. The i18n system makes it straightforward to add Arabic, Portuguese or Swahili — we plan to ship them next.",
+          },
+          {
+            q: "What databases do you integrate with?",
+            a: "AgroDash is database-agnostic. Connect Postgres, MySQL, Supabase, PlanetScale or MongoDB — any Node-compatible driver works out of the box.",
+          },
+          {
+            q: "Is there a mobile app?",
+            a: "AgroDash is a fully responsive web app that feels native on mobile. A React Native companion with offline field-data sync is on our roadmap for 2026.",
+          },
+          {
+            q: "Do you offer discounts for cooperatives?",
+            a: "Yes. Cooperatives with 50+ members get 30% off the Growth plan, and registered NGOs can access Enterprise features at a steep discount.",
+          },
+          {
+            q: "Can I bring my own auth provider?",
+            a: "Absolutely. AgroDash works with Auth.js, Clerk, Supabase Auth, Keycloak, or your own SSO / OIDC provider with minimal configuration.",
+          },
+          {
+            q: "How long does onboarding take?",
+            a: "Most teams are live within 48 hours. Enterprise customers get a dedicated CSM and a migration specialist to import existing data.",
+          },
+          {
+            q: "Is my data private and secure?",
+            a: "Your data stays in your workspace. We encrypt everything in transit and at rest, and we never train models on your operational data.",
+          },
+        ],
+      },
+      cta: {
+        eyebrow: "Ready when you are",
+        title: "Ready to modernize your operation?",
+        subtitle:
+          "Join the AgroDash beta today. Free for your first farm, no credit card required.",
+        primary: "Start your workspace",
+        secondary: "Book a 20-min demo",
+        emailPlaceholder: "you@farm.com",
+        emailCta: "Get started",
+      },
+      footer: {
+        tagline: "The operating system for modern agribusiness.",
+        product: "Product",
+        resources: "Resources",
+        company: "Company",
+        legal: "Legal",
+        copyright: "© {year} AgroDash, Inc. All rights reserved.",
+        links: {
+          features: "Features",
+          pricing: "Pricing",
+          changelog: "Changelog",
+          roadmap: "Roadmap",
+          docs: "Documentation",
+          guides: "Guides",
+          api: "API reference",
+          status: "Status",
+          about: "About",
+          customers: "Customers",
+          careers: "Careers",
+          contact: "Contact",
+          terms: "Terms",
+          privacy: "Privacy",
+          cookies: "Cookies",
+          dpa: "DPA",
+        },
+      },
+    },
+    pricing: {
+      eyebrow: "Pricing",
+      title: "Simple, transparent pricing.",
+      subtitle: "Pay per workspace. No hidden fees. Cancel anytime.",
+      monthly: "Monthly",
+      annual: "Annual",
+      saveBadge: "Save 20%",
+      perMonth: "/month",
+      billedAnnually: "billed annually",
+      mostPopular: "Most popular",
+      plans: {
+        starter: {
+          name: "Starter",
+          desc: "For a single farm getting started.",
+          priceMonthly: "$0",
+          priceAnnual: "$0",
+          cta: "Start free",
+          features: [
+            "1 workspace",
+            "Up to 3 users",
+            "Unlimited products",
+            "50 orders / month",
+            "Basic analytics",
+            "Email support",
+          ],
+        },
+        growth: {
+          name: "Growth",
+          desc: "For growing cooperatives and distributors.",
+          priceMonthly: "$49",
+          priceAnnual: "$39",
+          cta: "Start 14-day trial",
+          features: [
+            "Unlimited workspaces",
+            "Up to 20 users",
+            "Unlimited orders",
+            "Advanced analytics",
+            "Custom invoices & branding",
+            "Priority email support",
+          ],
+        },
+        enterprise: {
+          name: "Enterprise",
+          desc: "For multi-region operators and agri-groups.",
+          priceMonthly: "Custom",
+          priceAnnual: "Custom",
+          cta: "Talk to sales",
+          features: [
+            "Unlimited everything",
+            "SSO & SAML",
+            "Audit logs",
+            "Dedicated CSM",
+            "99.9% uptime SLA",
+            "Custom integrations",
+          ],
+        },
+      },
+      comparison: {
+        title: "Compare plans",
+        subtitle:
+          "Everything side by side, so you know exactly what you're getting.",
+        feature: "Feature",
+        starterCol: "Starter",
+        growthCol: "Growth",
+        enterpriseCol: "Enterprise",
+        rows: {
+          users: "Team members",
+          farms: "Farms & depots",
+          orders: "Orders / month",
+          invoices: "Invoices / month",
+          integrations: "Integrations",
+          support: "Support",
+          sso: "SSO / SAML",
+          audit: "Audit logs",
+          priority: "Priority support",
+          csm: "Dedicated CSM",
+        },
+        values: {
+          usersStarter: "3",
+          usersGrowth: "20",
+          usersEnterprise: "Unlimited",
+          farmsStarter: "1",
+          farmsGrowth: "10",
+          farmsEnterprise: "Unlimited",
+          ordersStarter: "50",
+          ordersGrowth: "Unlimited",
+          ordersEnterprise: "Unlimited",
+          invoicesStarter: "25",
+          invoicesGrowth: "Unlimited",
+          invoicesEnterprise: "Unlimited",
+          integrationsStarter: "Basic",
+          integrationsGrowth: "Advanced",
+          integrationsEnterprise: "Custom",
+          supportStarter: "Email",
+          supportGrowth: "Priority email",
+          supportEnterprise: "Dedicated CSM",
+        },
+      },
+      faqTitle: "Billing questions",
+      faqSubtitle: "How pricing, trials and invoices work at AgroDash.",
+      faq: [
+        {
+          q: "Can I switch plans at any time?",
+          a: "Yes. Upgrade, downgrade or cancel from your workspace settings. Pro-rata credits apply on upgrades, and refunds are issued on the unused portion on downgrades.",
+        },
+        {
+          q: "What happens after the 14-day trial?",
+          a: "Your workspace rolls back to the free Starter plan automatically. No surprise charges — you decide if and when to upgrade.",
+        },
+        {
+          q: "Do you offer a discount for cooperatives or NGOs?",
+          a: "Yes. Cooperatives with 50+ members get 30% off Growth, and registered NGOs get up to 50% off Enterprise. Just email us from your org domain.",
+        },
+        {
+          q: "Which payment methods do you accept?",
+          a: "Credit card, SEPA, ACH, Wave and Orange Money. Enterprise customers can also pay by bank transfer with a standard 30-day invoice.",
+        },
+        {
+          q: "Can I get an invoice for my accounting team?",
+          a: "Every payment generates a downloadable VAT invoice in your preferred currency. You can also add a VAT number to every receipt.",
+        },
+      ],
+      finalCta: {
+        eyebrow: "Start today",
+        title: "Try AgroDash free for 14 days.",
+        subtitle:
+          "Your first farm is on us — forever. Upgrade only when you're ready.",
+        primary: "Start your workspace",
+        secondary: "Talk to sales",
+      },
+    },
+};
+
+const fr = {
     app: {
       name: "AgroDash",
       tagline: "Gestion agroalimentaire",
@@ -1531,6 +2207,156 @@ export const dictionaries = {
         titleRequired: "Le titre est obligatoire",
       },
     },
+    commandPalette: {
+      placeholder: "Tapez une commande ou une recherche…",
+      close: "Fermer",
+      groups: {
+        navigation: "Navigation",
+        quickActions: "Actions rapides",
+        recent: "Consultés récemment",
+      },
+      actions: {
+        newOrder: "Nouvelle commande",
+        newOrderDesc: "Démarrer un brouillon de commande",
+        newInvoice: "Nouvelle facture",
+        newInvoiceDesc: "Créer une facture à partir de zéro",
+        newTask: "Nouvelle tâche",
+        newTaskDesc: "Ajouter une tâche au tableau",
+        newEvent: "Nouvel événement",
+        newEventDesc: "Planifier quelque chose au calendrier",
+        toggleTheme: "Changer de thème",
+        toggleThemeDesc: "Basculer entre clair et sombre",
+        switchToFrench: "Passer en français",
+        switchToEnglish: "Passer en anglais",
+        switchLanguageDesc: "Changer la langue de l'interface",
+        goToProfile: "Voir mon profil",
+        goToProfileDesc: "Consulter et modifier votre compte",
+        logOut: "Se déconnecter",
+        logOutDesc: "Mettre fin à votre session",
+      },
+      nav: {
+        dashboardDesc: "Vue d'ensemble de vos opérations",
+        productsDesc: "Catalogue et inventaire",
+        ordersDesc: "Flux de traitement",
+        customersDesc: "Agriculteurs, coopératives et distributeurs",
+        invoicesDesc: "Facturation et encaissements",
+        calendarDesc: "Planification et événements",
+        kanbanDesc: "Tableau opérationnel",
+        analyticsDesc: "Analyses et rapports",
+        settingsDesc: "Préférences de l'espace de travail",
+      },
+      recent: {
+        latestOrder: "Commande ADX-2067",
+        latestOrderDesc: "Kwame Mensah · 3 articles",
+        latestCustomer: "Savana Harvest Coop",
+        latestCustomerDesc: "Burkina Faso · Coopérative",
+        latestInvoice: "INV-2026-0042",
+        latestInvoiceDesc: "Amara Diallo · 3 240 $",
+      },
+      empty: {
+        title: "Aucun résultat pour « {query} »",
+        subtitle:
+          "Essayez de chercher une page, une action ou un élément récent.",
+      },
+      toasts: {
+        newOrderTitle: "Nouvelle commande",
+        newOrderDesc:
+          "La palette de commandes a lancé le flux de nouvelle commande.",
+        newInvoiceTitle: "Nouvelle facture",
+        newInvoiceDesc:
+          "La palette de commandes a lancé le flux de nouvelle facture.",
+        newTaskTitle: "Nouvelle tâche",
+        newTaskDesc:
+          "La palette de commandes a lancé le flux de nouvelle tâche.",
+        newEventTitle: "Nouvel événement",
+        newEventDesc:
+          "La palette de commandes a lancé le flux de nouvel événement.",
+        loggingOut: "Déconnexion…",
+        loggingOutDesc: "Démo — aucune session réelle à clôturer.",
+      },
+    },
+    shortcuts: {
+      title: "Raccourcis clavier",
+      subtitle: "Naviguez dans AgroDash à la vitesse du clavier.",
+      groups: {
+        general: "Général",
+        navigation: "Navigation",
+        actions: "Actions",
+      },
+      items: {
+        openPalette: "Ouvrir la palette de commandes",
+        toggleSidebar: "Afficher / réduire la barre latérale",
+        showShortcuts: "Afficher les raccourcis",
+        toggleTheme: "Changer de thème",
+        switchLanguage: "Changer de langue",
+        goDashboard: "Aller au Tableau de bord",
+        goProducts: "Aller aux Produits",
+        goOrders: "Aller aux Commandes",
+        goCustomers: "Aller aux Clients",
+        goInvoices: "Aller aux Factures",
+        goCalendar: "Aller au Calendrier",
+        goKanban: "Aller au Tableau",
+        goAnalytics: "Aller aux Statistiques",
+        goSettings: "Aller aux Paramètres",
+        newOrder: "Nouvelle commande",
+        newInvoice: "Nouvelle facture",
+        newTask: "Nouvelle tâche",
+        newEvent: "Nouvel événement",
+      },
+      hint: "Appuyez sur",
+      then: "puis",
+      toasts: {
+        themeToggled: "Thème basculé",
+        languageSwitched: "Langue modifiée",
+      },
+    },
+    errors: {
+      app: {
+        eyebrow: "Un problème est survenu",
+        title: "Quelque chose s'est mal passé",
+        subtitle:
+          "Une erreur inattendue s'est produite. Elle a été signalée à notre équipe — vous pouvez réessayer ou revenir au tableau de bord.",
+        digestLabel: "Identifiant d'erreur",
+        tryAgain: "Réessayer",
+        backToDashboard: "Retour au tableau de bord",
+      },
+      dashboard: {
+        title: "Cette section n'a pas pu se charger",
+        subtitle:
+          "Nous n'avons pas pu afficher cette page. Réessayez — si le problème persiste, contactez le support.",
+        tryAgain: "Réessayer",
+        goHome: "Accueil",
+      },
+      notFound: {
+        eyebrow: "Perdu dans les champs",
+        title: "Page introuvable",
+        subtitle:
+          "La page que vous cherchez a été récoltée, déplacée, ou n'a jamais existé.",
+        goHome: "Retour au tableau de bord",
+        goBack: "Retour",
+      },
+      maintenance: {
+        eyebrow: "Maintenance planifiée",
+        title: "Nous revenons très vite",
+        subtitle:
+          "AgroDash est en cours de mise à jour. De retour dans environ 30 minutes.",
+        status: "Tous les systèmes en cours de mise à jour",
+        checkStatus: "Voir le statut",
+        notifyLabel: "Prévenez-moi quand c'est prêt",
+        notifyPlaceholder: "vous@entreprise.com",
+        notifyCta: "Me prévenir",
+        notifyToast: "Vous êtes inscrit",
+        notifyToastDesc:
+          "Nous vous enverrons un email dès qu'AgroDash est de retour.",
+        affectedServices: "Services concernés",
+        services: {
+          api: "API publique",
+          dashboard: "Tableau de bord",
+          billing: "Facturation",
+          webhooks: "Webhooks",
+        },
+      },
+    },
     kanban: {
       title: "Tableau",
       subtitle:
@@ -1631,7 +2457,672 @@ export const dictionaries = {
       noMatches: "Aucun résultat",
       noMatchesDesc: "Essayez d'ajuster vos filtres.",
     },
-  },
+    help: {
+      eyebrow: "Support",
+      title: "Comment pouvons-nous vous aider ?",
+      subtitle: "Guides, intégrations, FAQ et une équipe qui vous répond.",
+      searchPlaceholder: "Rechercher des articles, guides, intégrations…",
+      popular: "Populaires",
+      popularTerms: [
+        "Démarrer",
+        "Facturation",
+        "Raccourcis clavier",
+        "Exporter les données",
+        "Permissions",
+      ],
+      categories: {
+        gettingStarted: {
+          title: "Démarrer",
+          articles: "12 articles",
+          desc: "Votre première semaine avec AgroDash — de l'intégration à votre première récolte.",
+        },
+        dashboard: {
+          title: "Tableau de bord et données",
+          articles: "18 articles",
+          desc: "Personnalisez vos widgets, filtrez vos rapports et explorez chaque KPI.",
+        },
+        orders: {
+          title: "Commandes et livraison",
+          articles: "14 articles",
+          desc: "Du devis à la livraison — automatisez votre chaîne logistique.",
+        },
+        invoices: {
+          title: "Facturation et paiements",
+          articles: "9 articles",
+          desc: "Émettez des factures, acceptez des paiements et rapprochez en quelques minutes.",
+        },
+        integrations: {
+          title: "Intégrations",
+          articles: "22 articles",
+          desc: "Connectez Stripe, Wave, Excel, webhooks et bien plus.",
+        },
+        security: {
+          title: "Sécurité et confidentialité",
+          articles: "7 articles",
+          desc: "Chiffrement, 2FA, SSO et notre gestion de vos données.",
+        },
+      },
+      popularArticlesTitle: "Populaires cette semaine",
+      articles: [
+        { title: "Configurer votre première ferme", readTime: "3 min de lecture" },
+        { title: "Connecter un fournisseur de paiement", readTime: "4 min de lecture" },
+        { title: "Comprendre les alertes de stock", readTime: "2 min de lecture" },
+        { title: "Inviter des coéquipiers et gérer les rôles", readTime: "5 min de lecture" },
+        { title: "Exporter les rapports vers Excel", readTime: "3 min de lecture" },
+        { title: "Automatiser les relances de commandes", readTime: "6 min de lecture" },
+      ],
+      faqTitle: "Questions fréquentes",
+      faq: [
+        {
+          q: "Comment inviter mon équipe ?",
+          a: "Rendez-vous dans Paramètres → Équipe et envoyez un lien d'invitation. Vous pouvez attribuer des rôles (Admin, Opérations, Lecteur) à tout moment — aucun coût par invitation.",
+        },
+        {
+          q: "Puis-je importer depuis Excel ou CSV ?",
+          a: "Oui. Chaque vue liste (Produits, Clients, Commandes, Factures) dispose d'un bouton Importer qui accepte les fichiers .xlsx et .csv, avec mappage des colonnes et aperçu avant validation.",
+        },
+        {
+          q: "AgroDash fonctionne-t-il hors ligne ?",
+          a: "Le tableau de bord nécessite une connexion, mais l'application mobile met en cache vos 7 derniers jours de commandes et vous permet d'enregistrer de l'activité hors ligne — la synchronisation se fait au retour en ligne.",
+        },
+        {
+          q: "Comment activer la double authentification ?",
+          a: "Depuis Paramètres → Sécurité, activez la 2FA via application d'authentification ou SMS. Nous la recommandons vivement pour tout compte ayant accès à la facturation.",
+        },
+        {
+          q: "Puis-je mettre le tableau de bord en marque blanche ?",
+          a: "Le plan Business permet de personnaliser le logo, la couleur d'accent et le domaine d'email. La marque blanche complète (avec votre propre CNAME) est disponible sur le plan Enterprise.",
+        },
+        {
+          q: "Les données sont-elles chiffrées au repos ?",
+          a: "Oui — AES-256 au repos, TLS 1.3 en transit. Les sauvegardes sont chiffrées et stockées dans une région distincte. Un rapport SOC 2 Type II est disponible sur demande.",
+        },
+        {
+          q: "Comment les factures sont-elles calculées ?",
+          a: "Chaque ligne utilise prix unitaire × quantité, avec une TVA (7,5 % par défaut) appliquée sur le sous-total. Vous pouvez ajuster le taux ou désactiver la TVA par facture.",
+        },
+        {
+          q: "Qu'inclut le plan gratuit ?",
+          a: "Jusqu'à 2 utilisateurs, 100 produits actifs, analytique de base et support par email. Idéal pour tester AgroDash de bout en bout avant de passer au plan Growth.",
+        },
+      ],
+      contact: {
+        title: "Toujours coincé ? Nous sommes là",
+        desc: "Notre équipe est disponible du lundi au samedi, de 7 h à 21 h GMT. La plupart des réponses arrivent en moins de deux heures.",
+        email: "Envoyer un email",
+        ticketCta: "Ouvrir un ticket",
+        ticketDialog: {
+          title: "Ouvrir un ticket de support",
+          subjectLabel: "Sujet",
+          categoryLabel: "Catégorie",
+          priorityLabel: "Priorité",
+          descLabel: "Description",
+          submit: "Envoyer le ticket",
+          cancel: "Annuler",
+          toastSuccess: "Ticket envoyé",
+          toastSuccessDesc: "Notre équipe vous répondra sous 2 heures.",
+          priorities: {
+            low: "Basse",
+            medium: "Moyenne",
+            high: "Haute",
+          },
+          categories: [
+            "Facturation et factures",
+            "Commandes et livraison",
+            "Intégrations",
+            "Signaler un bug",
+            "Demande de fonctionnalité",
+          ],
+        },
+      },
+      stats: {
+        responseTime: "Temps de réponse moyen : 2 h",
+        satisfaction: "Satisfaction : 4,9/5",
+        languages: "Disponible en EN + FR",
+      },
+      browse: "Parcourir",
+      readTime: "de lecture",
+      toasts: {
+        noResults: "Aucun résultat pour l'instant, essayez « factures » ou « raccourcis »",
+      },
+    },
+    dateRange: {
+      pickRange: "Choisir une période",
+      apply: "Appliquer",
+      reset: "Réinitialiser",
+      custom: "Personnalisée",
+      presets: {
+        today: "Aujourd'hui",
+        yesterday: "Hier",
+        last7: "7 derniers jours",
+        last30: "30 derniers jours",
+        thisMonth: "Ce mois-ci",
+        lastMonth: "Mois dernier",
+        thisQuarter: "Ce trimestre",
+        last12: "12 derniers mois",
+        custom: "Personnalisée",
+      },
+      separator: " – ",
+      monthsShort: [
+        "Janv",
+        "Févr",
+        "Mars",
+        "Avr",
+        "Mai",
+        "Juin",
+        "Juil",
+        "Août",
+        "Sept",
+        "Oct",
+        "Nov",
+        "Déc",
+      ],
+      weekdaysShort: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+    },
+    marketing: {
+      nav: {
+        features: "Fonctionnalités",
+        pricing: "Tarifs",
+        faq: "FAQ",
+        docs: "Docs",
+        github: "GitHub",
+        signIn: "Se connecter",
+        openDashboard: "Ouvrir le tableau de bord",
+        openMenu: "Ouvrir le menu",
+        closeMenu: "Fermer le menu",
+      },
+      hero: {
+        eyebrow: "Nouveau · v1.0 disponible",
+        title: "Le système d'exploitation de l'agribusiness moderne.",
+        subtitle:
+          "Planifiez les récoltes, suivez les stocks, traitez les commandes et facturez vos clients — depuis un seul espace pensé pour les fermes, coopératives et distributeurs agricoles.",
+        primaryCta: "Commencer",
+        secondaryCta: "Voir la démo",
+        trustLine:
+          "La confiance de 2 400+ fermes et coopératives dans 18 pays.",
+        badgeLive: "Tableau de bord en direct",
+        peripheralOrder: "Nouvelle commande · Lagos",
+        peripheralOrderMeta: "il y a 3 minutes",
+        peripheralHarvest: "Récolte dans les temps",
+        peripheralHarvestMeta: "+12 % vs. saison dernière",
+      },
+      logos: {
+        title: "La confiance des équipes de",
+      },
+      features: {
+        eyebrow: "Tout ce qu'il vous faut",
+        title: "Un espace. Toutes vos fermes. Toutes vos cultures.",
+        subtitle:
+          "AgroDash réunit vos champs, dépôts, commandes et finances dans une seule vue opérationnelle — fini les tableurs et l'à-peu-près.",
+        items: {
+          stock: {
+            title: "Stock en temps réel",
+            desc: "Suivez chaque champ, dépôt et expédition avec des décomptes en direct et des alertes de réappro automatiques.",
+          },
+          orders: {
+            title: "Commandes & livraison",
+            desc: "Du devis à la livraison, pilotez tout votre pipeline avec votre équipe logistique.",
+          },
+          invoicing: {
+            title: "Facturation intelligente",
+            desc: "Générez des factures avec TVA, suivez les paiements et relancez sans quitter AgroDash.",
+          },
+          calendar: {
+            title: "Calendrier & planification",
+            desc: "Planifiez récoltes, inspections et formations sur un calendrier partagé par toute votre équipe.",
+          },
+          kanban: {
+            title: "Kanban d'équipe",
+            desc: "Coordonnez conformité, logistique et terrain avec un tableau conçu pour les ops agricoles.",
+          },
+          analytics: {
+            title: "Analyses approfondies",
+            desc: "Décortiquez vos revenus par région, catégorie et client pour identifier votre prochain levier de croissance.",
+          },
+        },
+      },
+      splits: {
+        eyebrow: "Pensé pour votre terrain",
+        supplyChain: {
+          eyebrow: "Opérations",
+          title: "Visualisez toute votre chaîne d'approvisionnement d'un coup d'œil.",
+          desc: "Chaque commande, chaque dépôt, chaque livraison — consolidés en tableaux de bord en direct pour que rien ne passe entre les mailles. Remontez d'une région à un seul camion en deux clics.",
+          bullet1: "Flux de commandes et revenus en direct, toutes régions",
+          bullet2: "Analyses par catégorie qui guident vraiment vos décisions",
+          bullet3: "Export CSV ou PDF de n'importe quelle vue en un clic",
+        },
+        harvestInvoice: {
+          eyebrow: "Revenus",
+          title: "De la récolte à la facture en quelques minutes.",
+          desc: "Transformez chaque livraison en facture nette et brandée avec TVA, suivi des paiements et relances automatiques. Votre équipe finance vous dira merci.",
+          bullet1: "Factures PDF brandées avec TVA et devise locale",
+          bullet2: "Suivi des paiements avec références Mobile Money et bancaires",
+          bullet3: "Relances automatiques sur les créances en retard",
+        },
+        regions: {
+          eyebrow: "Pensé à l'échelle mondiale",
+          title: "Conçu pour les équipes de chaque région.",
+          desc: "Conçu main dans la main avec des fermes et coopératives à travers l'Afrique. Bilingue dès la première minute, multi-devises, et prêt pour vos réalités régionales.",
+          bullet1: "Interfaces en français et anglais, d'autres langues à venir",
+          bullet2: "Multi-devises avec formats locaux",
+          bullet3: "Rapports régionaux que votre conseil d'administration comprendra",
+          countries: [
+            "Sénégal",
+            "Côte d'Ivoire",
+            "Ghana",
+            "Nigeria",
+            "Kenya",
+            "Rwanda",
+            "Éthiopie",
+            "Afrique du Sud",
+            "Maroc",
+          ],
+        },
+      },
+      testimonials: {
+        eyebrow: "Adopté par les opérationnels",
+        title: "Plébiscité par les dirigeants agricoles.",
+        subtitle:
+          "Des retours concrets d'équipes qui font tourner de vraies opérations sur AgroDash.",
+        items: {
+          one: {
+            quote:
+              "Nous avons réduit le délai commande-livraison de 48 h à 12 h.",
+            name: "Amara Diallo",
+            role: "PDG",
+            company: "Sahel Coop",
+          },
+          two: {
+            quote:
+              "Enfin un tableau de bord qui comprend nos réalités régionales.",
+            name: "Kwame Mensah",
+            role: "Responsable des opérations",
+            company: "Ghana Harvest",
+          },
+          three: {
+            quote: "Rien que la facturation nous a fait économiser deux comptables.",
+            name: "Mmabatho Nkosi",
+            role: "Directrice financière",
+            company: "Karoo Farms",
+          },
+        },
+      },
+      pricingPreview: {
+        eyebrow: "Tarifs",
+        title: "Des tarifs simples et transparents.",
+        subtitle: "Commencez gratuitement. Évoluez à votre rythme. Annulez à tout moment.",
+        seeAll: "Voir tous les tarifs",
+        monthSuffix: "/mois",
+        plans: {
+          starter: {
+            name: "Starter",
+            price: "0 $",
+            desc: "Pour une seule ferme qui démarre.",
+            cta: "Commencer gratuitement",
+          },
+          growth: {
+            name: "Growth",
+            price: "49 $",
+            desc: "Pour les coopératives et distributeurs en croissance.",
+            cta: "Passer à Growth",
+          },
+          enterprise: {
+            name: "Enterprise",
+            price: "Sur mesure",
+            desc: "Pour les opérateurs multi-régions et les groupes agricoles.",
+            cta: "Parler aux ventes",
+          },
+        },
+        mostPopular: "Le plus populaire",
+      },
+      faq: {
+        eyebrow: "FAQ",
+        title: "Vos questions, nos réponses.",
+        subtitle:
+          "Tout ce que vous devez savoir avant de vous lancer avec AgroDash.",
+        items: [
+          {
+            q: "Puis-je auto-héberger AgroDash ?",
+            a: "Oui. AgroDash se déploie comme une application Next.js classique sur Vercel, un VPS ou votre propre cluster Kubernetes. Le code vous appartient, sans runtime caché.",
+          },
+          {
+            q: "Prenez-vous en charge le français et d'autres langues ?",
+            a: "L'anglais et le français sont disponibles dès aujourd'hui, avec une couverture complète de l'interface. Notre système d'i18n facilite l'ajout de l'arabe, du portugais ou du swahili — ils arrivent bientôt.",
+          },
+          {
+            q: "Avec quelles bases de données fonctionnez-vous ?",
+            a: "AgroDash est agnostique : connectez Postgres, MySQL, Supabase, PlanetScale ou MongoDB — n'importe quel driver Node fonctionne tel quel.",
+          },
+          {
+            q: "Y a-t-il une application mobile ?",
+            a: "AgroDash est une application web entièrement responsive qui fonctionne comme une app native sur mobile. Une version React Native avec synchronisation terrain hors ligne est prévue pour 2026.",
+          },
+          {
+            q: "Proposez-vous des remises pour les coopératives ?",
+            a: "Oui. Les coopératives de 50+ membres bénéficient de 30 % sur Growth, et les ONG enregistrées accèdent aux fonctionnalités Enterprise à tarif très réduit.",
+          },
+          {
+            q: "Puis-je utiliser mon propre fournisseur d'authentification ?",
+            a: "Absolument. AgroDash fonctionne avec Auth.js, Clerk, Supabase Auth, Keycloak ou votre propre SSO / OIDC avec une configuration minimale.",
+          },
+          {
+            q: "Combien de temps dure la mise en route ?",
+            a: "La plupart des équipes sont opérationnelles en 48 h. Les clients Enterprise bénéficient d'un CSM dédié et d'un spécialiste migration pour importer leurs données.",
+          },
+          {
+            q: "Mes données sont-elles privées et sécurisées ?",
+            a: "Vos données restent dans votre espace. Tout est chiffré en transit et au repos, et nous n'entraînons jamais de modèle sur vos données opérationnelles.",
+          },
+        ],
+      },
+      cta: {
+        eyebrow: "Quand vous voulez",
+        title: "Prêt·e à moderniser votre opération ?",
+        subtitle:
+          "Rejoignez la bêta AgroDash dès aujourd'hui. Gratuit pour votre première ferme, sans carte bancaire.",
+        primary: "Créer votre espace",
+        secondary: "Réserver une démo de 20 min",
+        emailPlaceholder: "vous@ferme.com",
+        emailCta: "Commencer",
+      },
+      footer: {
+        tagline: "Le système d'exploitation de l'agribusiness moderne.",
+        product: "Produit",
+        resources: "Ressources",
+        company: "Entreprise",
+        legal: "Légal",
+        copyright: "© {year} AgroDash, Inc. Tous droits réservés.",
+        links: {
+          features: "Fonctionnalités",
+          pricing: "Tarifs",
+          changelog: "Nouveautés",
+          roadmap: "Roadmap",
+          docs: "Documentation",
+          guides: "Guides",
+          api: "Référence API",
+          status: "État du service",
+          about: "À propos",
+          customers: "Clients",
+          careers: "Carrières",
+          contact: "Contact",
+          terms: "Conditions",
+          privacy: "Confidentialité",
+          cookies: "Cookies",
+          dpa: "DPA",
+        },
+      },
+    },
+    pricing: {
+      eyebrow: "Tarifs",
+      title: "Des tarifs simples et transparents.",
+      subtitle: "Par espace de travail. Sans frais cachés. Annulez quand vous voulez.",
+      monthly: "Mensuel",
+      annual: "Annuel",
+      saveBadge: "-20 %",
+      perMonth: "/mois",
+      billedAnnually: "facturé annuellement",
+      mostPopular: "Le plus populaire",
+      plans: {
+        starter: {
+          name: "Starter",
+          desc: "Pour une seule ferme qui démarre.",
+          priceMonthly: "0 $",
+          priceAnnual: "0 $",
+          cta: "Commencer gratuitement",
+          features: [
+            "1 espace de travail",
+            "Jusqu'à 3 utilisateurs",
+            "Produits illimités",
+            "50 commandes / mois",
+            "Analyses de base",
+            "Support par email",
+          ],
+        },
+        growth: {
+          name: "Growth",
+          desc: "Pour les coopératives et distributeurs en croissance.",
+          priceMonthly: "49 $",
+          priceAnnual: "39 $",
+          cta: "Essai 14 jours",
+          features: [
+            "Espaces illimités",
+            "Jusqu'à 20 utilisateurs",
+            "Commandes illimitées",
+            "Analyses avancées",
+            "Factures & branding personnalisés",
+            "Support email prioritaire",
+          ],
+        },
+        enterprise: {
+          name: "Enterprise",
+          desc: "Pour les opérateurs multi-régions et groupes agricoles.",
+          priceMonthly: "Sur mesure",
+          priceAnnual: "Sur mesure",
+          cta: "Parler aux ventes",
+          features: [
+            "Tout en illimité",
+            "SSO & SAML",
+            "Journaux d'audit",
+            "CSM dédié",
+            "SLA 99,9 % de disponibilité",
+            "Intégrations personnalisées",
+          ],
+        },
+      },
+      comparison: {
+        title: "Comparez les plans",
+        subtitle:
+          "Tout côte à côte pour savoir exactement ce que vous obtenez.",
+        feature: "Fonctionnalité",
+        starterCol: "Starter",
+        growthCol: "Growth",
+        enterpriseCol: "Enterprise",
+        rows: {
+          users: "Membres d'équipe",
+          farms: "Fermes & dépôts",
+          orders: "Commandes / mois",
+          invoices: "Factures / mois",
+          integrations: "Intégrations",
+          support: "Support",
+          sso: "SSO / SAML",
+          audit: "Journaux d'audit",
+          priority: "Support prioritaire",
+          csm: "CSM dédié",
+        },
+        values: {
+          usersStarter: "3",
+          usersGrowth: "20",
+          usersEnterprise: "Illimité",
+          farmsStarter: "1",
+          farmsGrowth: "10",
+          farmsEnterprise: "Illimité",
+          ordersStarter: "50",
+          ordersGrowth: "Illimité",
+          ordersEnterprise: "Illimité",
+          invoicesStarter: "25",
+          invoicesGrowth: "Illimité",
+          invoicesEnterprise: "Illimité",
+          integrationsStarter: "De base",
+          integrationsGrowth: "Avancées",
+          integrationsEnterprise: "Sur mesure",
+          supportStarter: "Email",
+          supportGrowth: "Email prioritaire",
+          supportEnterprise: "CSM dédié",
+        },
+      },
+      faqTitle: "Questions de facturation",
+      faqSubtitle: "Comment fonctionnent tarifs, essais et factures chez AgroDash.",
+      faq: [
+        {
+          q: "Puis-je changer de plan à tout moment ?",
+          a: "Oui. Montez, descendez ou annulez depuis les paramètres de votre espace. Les crédits au prorata s'appliquent en montée, et des remboursements sont émis sur la portion non utilisée en descente.",
+        },
+        {
+          q: "Que se passe-t-il après l'essai de 14 jours ?",
+          a: "Votre espace revient automatiquement au plan Starter gratuit. Aucune mauvaise surprise — vous décidez si et quand passer à un plan payant.",
+        },
+        {
+          q: "Proposez-vous une remise pour les coopératives ou ONG ?",
+          a: "Oui. Les coopératives de 50+ membres bénéficient de 30 % sur Growth, et les ONG enregistrées jusqu'à 50 % sur Enterprise. Écrivez-nous depuis votre domaine d'organisation.",
+        },
+        {
+          q: "Quels moyens de paiement acceptez-vous ?",
+          a: "Carte bancaire, SEPA, ACH, Wave et Orange Money. Les clients Enterprise peuvent aussi payer par virement bancaire avec facture à 30 jours.",
+        },
+        {
+          q: "Puis-je obtenir une facture pour ma comptabilité ?",
+          a: "Chaque paiement génère une facture TVA téléchargeable dans votre devise préférée. Vous pouvez aussi ajouter un numéro de TVA à chaque reçu.",
+        },
+      ],
+      finalCta: {
+        eyebrow: "Démarrez aujourd'hui",
+        title: "Essayez AgroDash gratuitement pendant 14 jours.",
+        subtitle:
+          "Votre première ferme, c'est offert — pour toujours. Passez à l'échelle quand vous êtes prêt·e.",
+        primary: "Créer votre espace",
+        secondary: "Parler aux ventes",
+      },
+    },
 };
 
-export type Dictionary = (typeof dictionaries)["en"];
+export type Dictionary = typeof en;
+
+/* ──────────────────────────────────────────────────────────────
+ * Arabic dictionary (proof-of-concept for RTL support).
+ *
+ * Built by deep-cloning the English dictionary and overriding the
+ * highest-traffic keys — navigation, core statuses, common buttons,
+ * settings tabs, and the dashboard hero. Any key NOT touched below
+ * intentionally falls back to the English value.
+ *
+ * // TODO: translate the remaining English fallbacks to ship a full
+ * // Arabic UX. What's here is enough for reviewers to verify that
+ * // the layout mirrors correctly and the core navigation reads in
+ * // Arabic.
+ * ──────────────────────────────────────────────────────────────── */
+function buildArabic(base: Dictionary): Dictionary {
+  // Deep clone so we never mutate the English source.
+  const ar = JSON.parse(JSON.stringify(base)) as Dictionary;
+
+  ar.app.name = "AgroDash";
+  ar.app.tagline = "إدارة الأعمال الزراعية";
+
+  ar.nav.dashboard = "لوحة التحكم";
+  ar.nav.products = "المنتجات";
+  ar.nav.orders = "الطلبات";
+  ar.nav.customers = "العملاء";
+  ar.nav.invoices = "الفواتير";
+  ar.nav.calendar = "التقويم";
+  ar.nav.kanban = "اللوحة";
+  ar.nav.analytics = "التحليلات";
+  ar.nav.settings = "الإعدادات";
+  ar.nav.logout = "تسجيل الخروج";
+  ar.nav.search = "ابحث عن أي شيء...";
+  ar.nav.searchShort = "بحث";
+  ar.nav.notifications = "الإشعارات";
+  ar.nav.viewAll = "عرض الكل";
+  ar.nav.help = "المساعدة";
+  ar.nav.main = "الرئيسية";
+  ar.nav.preferences = "التفضيلات";
+  ar.nav.profile = "الملف الشخصي";
+  ar.nav.language = "اللغة";
+  ar.nav.toggleTheme = "تبديل السمة";
+  ar.nav.openMenu = "فتح القائمة";
+  ar.nav.closeMenu = "إغلاق القائمة";
+  ar.nav.account = "الحساب";
+  ar.nav.primary = "الرئيسية";
+  ar.nav.mainNavigation = "التنقل الرئيسي";
+  ar.nav.brandHome = "الصفحة الرئيسية لـ AgroDash";
+  ar.nav.collapse = "طيّ";
+  ar.nav.expandSidebar = "توسيع الشريط الجانبي";
+  ar.nav.collapseSidebar = "طيّ الشريط الجانبي";
+  ar.nav.markAllRead = "تعليم الكل كمقروء";
+
+  ar.common.edit = "تعديل";
+  ar.common.delete = "حذف";
+  ar.common.view = "عرض";
+  ar.common.duplicate = "تكرار";
+  ar.common.pagination.showing = "عرض";
+  ar.common.pagination.of = "من";
+  ar.common.pagination.results = "نتيجة";
+  ar.common.pagination.prev = "السابق";
+  ar.common.pagination.next = "التالي";
+  ar.common.toast.saved = "تم حفظ التغييرات";
+  ar.common.toast.created = "تم الإنشاء";
+  ar.common.toast.deleted = "تم الحذف";
+
+  ar.dashboard.title = "صباح الخير، أليكس";
+  ar.dashboard.subtitle = "إليك ما يحدث في مزارعك ومستودعاتك اليوم.";
+  ar.dashboard.newOrder = "طلب جديد";
+  ar.dashboard.export = "تصدير";
+  ar.dashboard.overviewBadge = "نظرة عامة";
+  ar.dashboard.thisMonth = "هذا الشهر";
+  ar.dashboard.kpi.revenue = "إجمالي الإيرادات";
+  ar.dashboard.kpi.orders = "الطلبات";
+  ar.dashboard.kpi.customers = "العملاء النشطون";
+  ar.dashboard.kpi.products = "المنتجات في المخزون";
+
+  ar.products.title = "المنتجات";
+  ar.products.add = "إضافة منتج";
+  ar.products.searchPlaceholder = "ابحث عن منتج أو SKU أو مورد...";
+  ar.products.status.in_stock = "متوفر";
+  ar.products.status.low_stock = "مخزون منخفض";
+  ar.products.status.out_of_stock = "نفد المخزون";
+  ar.products.categories.seeds = "بذور";
+  ar.products.categories.fertilizer = "أسمدة";
+  ar.products.categories.pesticide = "مبيدات";
+  ar.products.categories.equipment = "معدات";
+  ar.products.categories.feed = "أعلاف حيوانية";
+  ar.products.categories.harvest = "حصاد";
+  ar.products.form.cancel = "إلغاء";
+  ar.products.form.save = "حفظ";
+
+  ar.orders.title = "الطلبات";
+  ar.orders.searchPlaceholder = "ابحث بالمرجع أو العميل...";
+  ar.orders.status.pending = "قيد الانتظار";
+  ar.orders.status.processing = "قيد المعالجة";
+  ar.orders.status.shipped = "تم الشحن";
+  ar.orders.status.delivered = "تم التسليم";
+  ar.orders.status.cancelled = "ملغاة";
+  ar.orders.detail.back = "العودة إلى الطلبات";
+  ar.orders.detail.print = "طباعة";
+
+  ar.customers.title = "العملاء";
+  ar.customers.tiers.farmer = "مزارع";
+  ar.customers.tiers.distributor = "موزع";
+  ar.customers.tiers.retailer = "تاجر تجزئة";
+  ar.customers.tiers.cooperative = "تعاونية";
+
+  ar.settings.title = "الإعدادات";
+  ar.settings.subtitle = "إدارة تفضيلات مساحة العمل والملف الشخصي.";
+  ar.settings.tabs.profile = "الملف الشخصي";
+  ar.settings.tabs.preferences = "التفضيلات";
+  ar.settings.tabs.notifications = "الإشعارات";
+  ar.settings.tabs.billing = "الفوترة";
+  ar.settings.preferences.title = "التفضيلات";
+  ar.settings.preferences.theme = "السمة";
+  ar.settings.preferences.themeLight = "فاتح";
+  ar.settings.preferences.themeDark = "داكن";
+  ar.settings.preferences.themeSystem = "النظام";
+  ar.settings.preferences.language = "اللغة";
+  ar.settings.preferences.languageDesc = "ستتم إعادة تحميل الواجهة باللغة المختارة.";
+  ar.settings.preferences.currency = "العملة";
+  ar.settings.profile.save = "حفظ التغييرات";
+
+  ar.invoices.title = "الفواتير";
+  ar.invoices.detail.print = "طباعة";
+  ar.invoices.detail.download = "تنزيل PDF";
+  ar.invoices.detail.markPaid = "تعليم كمدفوعة";
+  ar.invoices.detail.back = "العودة إلى الفواتير";
+
+  // Auth — minimal common buttons
+  ar.auth.signIn.submit = "تسجيل الدخول";
+  ar.auth.signUp.submit = "إنشاء مساحة العمل";
+  ar.auth.forgot.submit = "إرسال رابط إعادة التعيين";
+
+  return ar;
+}
+
+const ar = buildArabic(en);
+
+export const dictionaries: Record<Locale, Dictionary> = { en, fr, ar };

@@ -84,7 +84,7 @@ export function DialogContent({
       )}
     >
       {(title || description) && (
-        <div className="shrink-0 border-b border-[color:var(--color-border)] px-5 py-4 pr-12 sm:px-6">
+        <div className="shrink-0 border-b border-[color:var(--color-border)] px-5 py-4 pe-12 sm:px-6">
           {title && (
             <h2 className="text-base font-semibold leading-tight">{title}</h2>
           )}
@@ -100,7 +100,7 @@ export function DialogContent({
           type="button"
           onClick={() => ctx?.onOpenChange(false)}
           aria-label="Close"
-          className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)]"
+          className="absolute end-3 top-3 inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)]"
         >
           <X className="size-4" />
         </button>

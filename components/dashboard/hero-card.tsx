@@ -35,10 +35,11 @@ export function HeroCard({
         className
       )}
     >
-      {/* Decorative leaf bursts */}
+      {/* Decorative leaf bursts — anchored to the inline-end corner so
+          the artwork follows the reading flow in both LTR and RTL. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -right-10 -top-10 grid size-48 place-items-center opacity-[0.07] [--mask:radial-gradient(circle_at_center,black,transparent_60%)] [mask-image:var(--mask)]"
+        className="pointer-events-none absolute -end-10 -top-10 grid size-48 place-items-center opacity-[0.07] [--mask:radial-gradient(circle_at_center,black,transparent_60%)] [mask-image:var(--mask)]"
       >
         <Leaf className="size-48 text-[color:var(--color-primary)]" strokeWidth={1.2} />
       </span>
@@ -63,7 +64,7 @@ export function HeroCard({
                   className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-[color:var(--color-foreground)] px-4 text-sm font-semibold text-[color:var(--color-background)] shadow-elev-xs transition-all hover:opacity-90 active:scale-[0.98]"
                 >
                   {primaryCta.label}
-                  <ArrowUpRight className="size-4" />
+                  <ArrowUpRight className="size-4 rtl:scale-x-[-1]" />
                 </button>
               )}
               {secondaryCta && (

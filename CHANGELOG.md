@@ -4,6 +4,43 @@ All notable changes to this template are documented here. This project
 follows [Semantic Versioning](https://semver.org) and keeps a
 [Keep a Changelog](https://keepachangelog.com) style history.
 
+## [1.2.0] — 2026-04-20
+
+### Added — marketing surface + premium interactions
+- **Public landing page** (`/`) — hero, feature grid, split feature
+  sections, testimonials, pricing preview, FAQ, CTA + marketing
+  top-nav/footer. Dashboard moved to `/dashboard`.
+- **Pricing page** (`/pricing`) — 3 tiers with monthly / annual toggle,
+  comparison table, billing FAQ.
+- **Command palette** (`⌘K` / `Ctrl K`) — fuzzy nav across every page,
+  quick actions, recently viewed; Linear/Raycast-style polish.
+- **Keyboard shortcuts modal** (`?` or `Ctrl /`) — complete cheat sheet
+  of all global chords; `g d/p/o/c/i/l/k/a/s` two-key sequences for
+  navigation; `Ctrl T` toggles theme; `Ctrl L` switches locale.
+- **Error pages** — `app/error.tsx` (global), `app/(dashboard)/error.tsx`
+  (scoped), `/maintenance`; polished `not-found.tsx` with mesh bg.
+- **Help Center** (`/help`) — category grid, popular articles, FAQ
+  accordion, contact card with ticket dialog, stats strip.
+- **Date Range picker** — reusable primitive with 9 presets + custom
+  two-month calendar; wired into Analytics.
+- **RTL support** — third locale `ar` (Arabic proof-of-concept),
+  `document.dir` switched by LanguageProvider, logical-property audit
+  across sidebar/header/dialogs/tooltips, direction-aware icons flip
+  via new `rtl:` / `ltr:` custom variants in `globals.css`.
+- **Print styles** — sidebar/header/chrome hidden when printing;
+  invoices become clean black-on-white receipts.
+- **Bilingual** for every new surface — EN + FR.
+
+### Changed
+- Sidebar root href is now `/dashboard` (was `/`); `PublicRoute` first.
+- Sitemap lists marketing routes first + dashboard under `/dashboard`.
+
+### Developer experience
+- Two new providers (`CommandPaletteProvider`, `ShortcutsProvider`)
+  mounted inside the dashboard shell.
+- New `@custom-variant rtl` and `@custom-variant ltr` so components
+  can express direction with `rtl:*` / `ltr:*` utilities.
+
 ## [1.1.0] — 2026-04-20
 
 ### Added

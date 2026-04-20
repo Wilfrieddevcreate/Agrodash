@@ -20,6 +20,7 @@ import Link from "next/link";
 import { cn, relativeTime } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/sidebar-provider";
 import { useLanguage, useT } from "@/components/providers/language-provider";
+import { useCommandPalette } from "@/components/command-palette/command-palette-provider";
 import { Avatar } from "@/components/ui/avatar";
 import { Dropdown, DropdownItem, DropdownLabel, DropdownSeparator } from "@/components/ui/dropdown";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -34,30 +35,13 @@ export function Header() {
   React.useEffect(() => setMounted(true), []);
 
   const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
-  const searchRef = React.useRef<HTMLInputElement>(null);
   const mobileSearchRef = React.useRef<HTMLInputElement>(null);
+  const { openPalette } = useCommandPalette();
 
-  // Ctrl/Cmd+K focuses the search input
-  React.useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        // On mobile, open the drawer and focus its input; on desktop focus the header search
-        if (window.matchMedia("(min-width: 768px)").matches) {
-          searchRef.current?.focus();
-          searchRef.current?.select();
-        } else {
-          setMobileSearchOpen(true);
-          // Let the drawer mount, then focus
-          requestAnimationFrame(() => {
-            mobileSearchRef.current?.focus();
-          });
-        }
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  // Ctrl/Cmd+K is now owned by the command-palette provider — the header
+  // search input stays click-focusable but no longer steals the global chord.
+  // Clicking the desktop search or its kbd hint opens the palette so the
+  // UX stays consistent (keyboard-first, mouse-friendly).
 
   return (
     <header className="sticky top-0 z-30 border-b border-[color:var(--color-border)] bg-[color:var(--color-background)]/80 backdrop-blur-md">
@@ -72,16 +56,19 @@ export function Header() {
           <Menu className="size-5" />
         </button>
 
-        {/* Search — desktop / tablet */}
-        <div className="relative ml-1 hidden min-w-0 flex-1 md:flex md:max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
-          <input
-            ref={searchRef}
-            type="text"
-            placeholder={t.nav.search}
-            className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 pl-9 pr-14 text-sm transition-all placeholder:text-[color:var(--color-muted-foreground)] focus:bg-[color:var(--color-card)] focus-visible:border-[color:var(--color-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/30"
-          />
-          <kbd className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 select-none items-center gap-0.5 rounded border border-[color:var(--color-border)] bg-[color:var(--color-card)] px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--color-muted-foreground)] lg:inline-flex">
+        {/* Search — desktop / tablet. Acts as a button that opens the
+            command palette; keeps the familiar search-bar look. */}
+        <div className="relative ms-1 hidden min-w-0 flex-1 md:flex md:max-w-md">
+          <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
+          <button
+            type="button"
+            onClick={openPalette}
+            aria-label={t.nav.search}
+            className="flex h-10 w-full items-center rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 ps-9 pe-14 text-start text-sm text-[color:var(--color-muted-foreground)] transition-all hover:bg-[color:var(--color-card)] focus-visible:border-[color:var(--color-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/30"
+          >
+            {t.nav.search}
+          </button>
+          <kbd className="pointer-events-none absolute end-2 top-1/2 hidden -translate-y-1/2 select-none items-center gap-0.5 rounded border border-[color:var(--color-border)] bg-[color:var(--color-card)] px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--color-muted-foreground)] lg:inline-flex">
             Ctrl K
           </kbd>
         </div>
@@ -89,7 +76,7 @@ export function Header() {
         <div className="flex-1 md:hidden" />
 
         {/* Right cluster */}
-        <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
+        <div className="ms-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
           <Tooltip content={t.nav.searchShort} side="bottom">
             <button
               type="button"
@@ -123,6 +110,12 @@ export function Header() {
             <span className="flex-1">Français</span>
             {locale === "fr" && <Check className="size-4 text-[color:var(--color-primary)]" />}
           </DropdownItem>
+          <DropdownItem onClick={() => setLocale("ar")}>
+            <span className="flex-1" lang="ar" dir="rtl">
+              العربية
+            </span>
+            {locale === "ar" && <Check className="size-4 text-[color:var(--color-primary)]" />}
+          </DropdownItem>
         </Dropdown>
 
         {/* Theme */}
@@ -149,13 +142,13 @@ export function Header() {
 
         {/* Help */}
         <Tooltip content={t.nav.help} side="bottom">
-          <button
-            type="button"
+          <Link
+            href="/help"
             aria-label={t.nav.help}
             className="hidden size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] lg:inline-flex"
           >
             <HelpCircle className="size-[18px]" />
-          </button>
+          </Link>
         </Tooltip>
 
         <div className="mx-1 hidden h-6 w-px bg-[color:var(--color-border)] lg:block" />
@@ -165,7 +158,7 @@ export function Header() {
           trigger={
             <button
               type="button"
-              className="flex items-center gap-2 rounded-full p-0.5 pr-0 text-left transition-colors hover:bg-[color:var(--color-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)] sm:pr-2"
+              className="flex items-center gap-2 rounded-full p-0.5 pe-0 text-start transition-colors hover:bg-[color:var(--color-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)] sm:pe-2"
             >
               <Avatar name="Alex Diallo" size="md" />
               <div className="hidden text-xs leading-tight lg:block">
@@ -208,13 +201,13 @@ export function Header() {
       {mobileSearchOpen && (
         <div className="border-t border-[color:var(--color-border)] bg-[color:var(--color-background)] px-3 py-2 md:hidden">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
+            <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-[color:var(--color-muted-foreground)]" />
             <input
               ref={mobileSearchRef}
               autoFocus
               type="text"
               placeholder={t.nav.search}
-              className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 pl-9 pr-3 text-sm transition-all placeholder:text-[color:var(--color-muted-foreground)] focus:bg-[color:var(--color-card)] focus-visible:border-[color:var(--color-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/30"
+              className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 ps-9 pe-3 text-sm transition-all placeholder:text-[color:var(--color-muted-foreground)] focus:bg-[color:var(--color-card)] focus-visible:border-[color:var(--color-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)]/30"
             />
           </div>
         </div>
@@ -256,7 +249,7 @@ function NotificationsMenu() {
           className="relative inline-flex size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)]"
         >
           <Bell className="size-[18px]" />
-          <span className="absolute right-2 top-2 size-2 rounded-full bg-[color:var(--color-primary)] ring-2 ring-[color:var(--color-background)]" />
+          <span className="absolute end-2 top-2 size-2 rounded-full bg-[color:var(--color-primary)] ring-2 ring-[color:var(--color-background)]" />
         </button>
       }
     >

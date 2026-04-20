@@ -2,6 +2,11 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Directionality variants — opt-in flips for positional utilities that
+ * aren't covered by Tailwind v4's logical properties. */
+@custom-variant rtl (&:where([dir="rtl"] *, [dir="rtl"]));
+@custom-variant ltr (&:where([dir="ltr"] *, [dir="ltr"]));
+
 :root {
   /* Neutrals — slightly warmer off-white canvas, pure-white cards for lift */
   --background: oklch(0.985 0.004 120);
@@ -325,4 +330,73 @@
   );
   background-size: 800px 100%;
   animation: shimmer 1.6s linear infinite;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * RTL compatibility layer
+ * Logical Tailwind utilities (ps-*, pe-*, start-*, end-*) handle
+ * most cases. These rules patch the rare spots where we still rely
+ * on absolute left/right positioning or decorative transforms.
+ * ──────────────────────────────────────────────────────────── */
+[dir="rtl"] .scrollbar-none {
+  direction: rtl;
+}
+
+/* Manual horizontal flip for decorative icons and images */
+[dir="rtl"] .rtl\:flip,
+[dir="rtl"] [data-rtl-flip] {
+  transform: scaleX(-1);
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * Print styles — tuned for invoices, orders and receipts.
+ * Reviewers expect a clean, chrome-free sheet of paper.
+ * ──────────────────────────────────────────────────────────── */
+@media print {
+  /* Hide non-essential chrome */
+  aside,
+  header,
+  .print\:hidden,
+  [data-print-hide],
+  [role="dialog"] {
+    display: none !important;
+  }
+  /* Flatten backgrounds & elevation for ink */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  .shadow-elev-xs,
+  .shadow-elev-sm,
+  .shadow-elev-md,
+  .shadow-elev-lg,
+  .shadow-elev-xl {
+    box-shadow: none !important;
+  }
+  /* Force card borders to a visible gray so the print output reads well */
+  [class*="border-[color:var(--color-border)]"] {
+    border-color: #d4d4d4 !important;
+  }
+  /* Strip purely decorative elements */
+  [aria-hidden="true"] {
+    display: none !important;
+  }
+  /* Keep invoice roots together on a single page when possible */
+  [data-print-root] {
+    page-break-inside: avoid;
+  }
+  /* Expose external URLs next to links for paper readers */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #666;
+  }
+  /* ...but suppress URLs for in-app / anchor links */
+  a[href^="/"]:after,
+  a[href^="#"]:after {
+    content: "";
+  }
 }

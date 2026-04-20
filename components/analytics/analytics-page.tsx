@@ -16,10 +16,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ArrowUpRight, Calendar } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DateRange, type DateRangeValue } from "@/components/ui/date-range";
 import { PageHeader } from "@/components/layout/page-header";
 import { useT } from "@/components/providers/language-provider";
 import {
@@ -51,6 +51,10 @@ const tooltipStyle = {
 
 export function AnalyticsPage() {
   const t = useT();
+  const [range, setRange] = React.useState<DateRangeValue>({
+    from: null,
+    to: null,
+  });
 
   return (
     <>
@@ -58,11 +62,7 @@ export function AnalyticsPage() {
         eyebrow={t.analytics.eyebrow}
         title={t.analytics.title}
         description={t.analytics.subtitle}
-        actions={
-          <Button variant="outline" size="sm">
-            <Calendar /> {t.analytics.range}
-          </Button>
-        }
+        actions={<DateRange value={range} onChange={setRange} />}
       />
 
       {/* KPI strip */}

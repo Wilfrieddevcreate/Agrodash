@@ -170,12 +170,15 @@ export function InvoiceDetail({ id }: { id: string }) {
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      // data-print-root keeps the invoice on a single page when possible
+      // and is the anchor the print stylesheet targets.
+      data-print-root
     >
       <Link
         href="/invoices"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--color-muted-foreground)] transition-colors hover:text-[color:var(--color-foreground)]"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--color-muted-foreground)] transition-colors hover:text-[color:var(--color-foreground)] print:hidden"
       >
-        <ArrowLeft className="size-4" />
+        <ArrowLeft className="size-4 rtl:scale-x-[-1]" />
         {t.invoices.detail.back}
       </Link>
 
@@ -191,11 +194,16 @@ export function InvoiceDetail({ id }: { id: string }) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
+              onClick={() => {
                 toast.success(t.invoices.toasts.printing, {
                   description: `${invoice.number} ${t.invoices.toasts.printingDescSuffix}`,
-                })
-              }
+                });
+                // Defer to next tick so the toast can render before the
+                // browser's print dialog steals the main thread.
+                if (typeof window !== "undefined") {
+                  setTimeout(() => window.print(), 120);
+                }
+              }}
             >
               <Printer />
               {t.invoices.detail.print}
@@ -536,13 +544,13 @@ export function InvoiceDetail({ id }: { id: string }) {
             <CardHeader>
               <CardTitle>{t.invoices.detail.timeline.title}</CardTitle>
             </CardHeader>
-            <CardContent className="pl-6">
-              <ol className="relative space-y-4 border-l border-[color:var(--color-border)] pl-5">
+            <CardContent className="ps-6">
+              <ol className="relative space-y-4 border-s border-[color:var(--color-border)] ps-5">
                 {timeline.map((event, idx) => (
                   <li key={idx} className="relative">
                     <span
                       className={cn(
-                        "absolute -left-[27px] top-0.5 grid size-5 place-items-center rounded-full border-2",
+                        "absolute -start-[27px] top-0.5 grid size-5 place-items-center rounded-full border-2",
                         event.tone === "done"
                           ? "border-[color:var(--color-primary)] bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)]"
                           : event.tone === "pending"

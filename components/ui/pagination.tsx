@@ -129,7 +129,7 @@ export function Pagination({
               "disabled:pointer-events-none disabled:opacity-40"
             )}
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-4 rtl:scale-x-[-1]" />
           </button>
         </li>
 
@@ -176,7 +176,7 @@ export function Pagination({
               "disabled:pointer-events-none disabled:opacity-40"
             )}
           >
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-4 rtl:scale-x-[-1]" />
           </button>
         </li>
       </ul>

@@ -44,7 +44,7 @@ type NavItem = {
 };
 
 const mainNav: NavItem[] = [
-  { href: "/", key: "dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
   { href: "/products", key: "products", icon: Package },
   { href: "/orders", key: "orders", icon: ShoppingCart, badge: "12" },
   { href: "/customers", key: "customers", icon: Users },
@@ -60,6 +60,7 @@ const prefsNav: NavItem[] = [
 
 function isPathActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
+  if (href === "/dashboard") return pathname === "/dashboard";
   return pathname === href || pathname.startsWith(href + "/");
 }
 
@@ -109,16 +110,20 @@ export function Sidebar() {
         aria-label={t.nav.primary}
         data-collapsed={collapsed ? "true" : "false"}
         className={cn(
-          // Positioning & surface
-          "fixed inset-y-0 left-0 z-50 flex flex-col",
-          "border-r border-[color:var(--color-border)] bg-[color:var(--color-card)]",
+          // Positioning & surface — logical `start-0` puts the rail on the
+          // inline-start edge, which flips automatically in RTL.
+          "fixed inset-y-0 start-0 z-50 flex flex-col",
+          // Border lives on the inline-end edge (right in LTR, left in RTL)
+          "border-e border-[color:var(--color-border)] bg-[color:var(--color-card)]",
           // Width: mobile 280px, desktop 80 (collapsed) / 260 (expanded)
           "w-[280px] max-w-[85vw]",
           collapsed ? "lg:w-[80px]" : "lg:w-[260px]",
           // Smooth transitions
           "transition-[width,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          // Mobile slide
-          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          // Mobile slide — hides off the inline-start edge in both directions
+          mobileOpen
+            ? "translate-x-0"
+            : "ltr:-translate-x-full rtl:translate-x-full",
           "lg:translate-x-0",
           // Subtle shadow on mobile drawer
           "shadow-xl lg:shadow-none"
@@ -173,12 +178,12 @@ export function Sidebar() {
           />
         </div>
 
-        {/* Mobile close button — floats in the corner */}
+        {/* Mobile close button — floats in the inline-end corner */}
         <button
           type="button"
           aria-label={t.nav.closeMenu}
           onClick={() => setMobileOpen(false)}
-          className="absolute right-3 top-3 inline-flex size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] lg:hidden"
+          className="absolute end-3 top-3 inline-flex size-9 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-foreground)] lg:hidden"
         >
           <X className="size-5" />
         </button>
@@ -209,7 +214,7 @@ function SidebarBrand({
       )}
     >
       <Link
-        href="/"
+        href="/dashboard"
         onClick={onNavigate}
         aria-label={t.nav.brandHome}
         className="flex items-center"
@@ -301,12 +306,12 @@ function NavLink({
           "lg:h-10 lg:w-10 lg:gap-0 lg:justify-center lg:rounded-xl lg:p-0"
       )}
     >
-      {/* Left active bar — expanded only */}
+      {/* Inline-start active bar — expanded only */}
       {active && (
         <span
           aria-hidden
           className={cn(
-            "absolute inset-y-1.5 left-0 w-0.5 rounded-r-full bg-[color:var(--color-primary)]",
+            "absolute inset-y-1.5 start-0 w-0.5 rounded-e-full bg-[color:var(--color-primary)]",
             collapsed && "lg:hidden"
           )}
         />
@@ -331,7 +336,7 @@ function NavLink({
           {collapsed && (
             <span
               aria-hidden
-              className="absolute right-1.5 top-1.5 hidden size-2 rounded-full bg-[color:var(--color-primary)] ring-2 ring-[color:var(--color-card)] lg:block"
+              className="absolute end-1.5 top-1.5 hidden size-2 rounded-full bg-[color:var(--color-primary)] ring-2 ring-[color:var(--color-card)] lg:block"
             />
           )}
         </>
@@ -366,7 +371,7 @@ function UpgradePromo({ collapsed }: { collapsed: boolean }) {
       {/* Expanded card — mobile always + desktop expanded */}
       <div className={cn("block", collapsed && "lg:hidden")}>
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[color:var(--color-primary)]/15 via-[color:var(--color-primary)]/5 to-transparent p-4 ring-1 ring-inset ring-[color:var(--color-primary)]/20">
-          <div className="pointer-events-none absolute -right-6 -top-8 size-24 rounded-full bg-[color:var(--color-primary)]/20 blur-2xl" />
+          <div className="pointer-events-none absolute -end-6 -top-8 size-24 rounded-full bg-[color:var(--color-primary)]/20 blur-2xl" />
           <div className="mb-1.5 inline-flex size-7 items-center justify-center rounded-md bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] shadow-sm">
             <Sparkles className="size-3.5" />
           </div>
@@ -484,7 +489,7 @@ function CollapseToggle({
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="inline-flex"
           >
-            <ChevronsLeft className="size-[18px]" />
+            <ChevronsLeft className="size-[18px] rtl:scale-x-[-1]" />
           </motion.span>
         </span>
       ) : (
@@ -495,7 +500,7 @@ function CollapseToggle({
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="inline-flex"
             >
-              <ChevronsLeft className="size-[18px]" />
+              <ChevronsLeft className="size-[18px] rtl:scale-x-[-1]" />
             </motion.span>
             <span>{t.nav.collapse}</span>
           </span>

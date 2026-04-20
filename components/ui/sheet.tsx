@@ -63,7 +63,7 @@ export function Sheet({
               <button
                 onClick={() => onOpenChange(false)}
                 aria-label="Close"
-                className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] hover:bg-[color:var(--color-muted)]"
+                className="absolute end-3 top-3 inline-flex size-8 items-center justify-center rounded-md text-[color:var(--color-muted-foreground)] hover:bg-[color:var(--color-muted)]"
               >
                 <X className="size-4" />
               </button>
